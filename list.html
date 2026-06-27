@@ -5,35 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>辞書WEB - 検索結果</title>
     <style>
-        body { font-family: sans-serif; margin: 0; background: #f5f7fa; color: #2d3748; line-height: 1.6; }
+        body { font-family: sans-serif; margin: 0; background: #f7fafc; color: #2d3748; line-height: 1.6; }
         
-        /* 上部検索バー */
-        .top-bar {
-            display: flex;
-            align-items: center;
-            background: #fff;
-            padding: 15px 30px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        /* 💡 index.html と完全に一致させた上部検索バーのデザイン */
+        .top-header {
+            background: linear-gradient(135deg, #1a365d 0%, #2a4365 100%);
+            color: white;
+            padding: 25px 20px; /* 結果画面用に少し上下をスリムにしてコンテンツを見やすく調整 */
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
-        /* 💡 ロゴをクリック可能にし、index.htmlへ戻る設定に */
-        .logo { font-weight: bold; font-size: 22px; margin-right: 40px; color: #2b6cb0; cursor: pointer; user-select: none; }
+        .logo-title { font-size: 26px; font-weight: bold; margin-bottom: 15px; letter-spacing: 2px; cursor: pointer; display: inline-block; user-select: none; }
         
-        .search-wrapper { flex-grow: 1; max-width: 600px; position: relative; }
-        .search-container { display: flex; width: 100%; }
-        .search-input {
-            width: 100%; padding: 14px 20px; font-size: 16px; border: 2px solid #cbd5e0;
-            border-radius: 6px 0 0 6px; outline: none; color: #333;
-        }
-        .search-input:focus { border-color: #2b6cb0; }
-        .search-btn {
-            padding: 0 25px; background: #2b6cb0; color: white; border: none; cursor: pointer; font-size: 16px;
-        }
+        .search-wrapper { max-width: 650px; margin: 0 auto; position: relative; }
+        .search-container { display: flex; width: 100%; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 6px; overflow: hidden; }
+        .search-input { width: 100%; padding: 14px 20px; font-size: 16px; border: none; outline: none; color: #333; }
+        .search-btn { padding: 0 30px; background: #ecc94b; color: #1a365d; border: none; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .search-btn:hover { background: #f6e05e; }
 
-        /* 予測変換ボックス */
+        /* 予測変換ボックス（色を合わせるため文字色を調整） */
         .suggest-box {
-            position: absolute; top: 100%; left: 0; width: 100%; background: white;
-            border: 1px solid #cbd5e0; border-top: none; border-radius: 0 0 6px 6px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-height: 200px; overflow-y: auto; z-index: 1000; display: none;
+            position: absolute; top: 100%; left: 0; width: 100%; background: white; color: #333;
+            border-radius: 0 0 6px 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); max-height: 200px; overflow-y: auto; z-index: 1000; text-align: left; display: none;
         }
         .suggest-item { padding: 12px 20px; cursor: pointer; font-size: 16px; }
         .suggest-item:hover { background: #edf2f7; color: #2b6cb0; }
@@ -43,6 +36,7 @@
         .search-heading { font-size: 20px; margin-bottom: 20px; color: #4a5568; }
         .search-keyword { font-weight: bold; color: #2b6cb0; }
 
+        /* アコーディオンメニュー */
         .dict-menu { display: flex; flex-direction: column; gap: 15px; }
         .dict-option { background: white; border: 2px solid #e2e8f0; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
         .dict-trigger {
@@ -61,13 +55,11 @@
 </head>
 <body>
 
-    <!-- 上部検索バー -->
-    <div class="top-bar">
-        <!-- 💡 id="logo" を指定 -->
-        <div class="logo" id="logo">辞書WEB</div>
+    <div class="top-header">
+        <div class="logo-title" id="logo">🔍 辞書WEB</div>
         <div class="search-wrapper">
             <div class="search-container">
-                <input type="text" id="search-word" class="search-input" autocomplete="off">
+                <input type="text" id="search-word" class="search-input" autocomplete="off" placeholder="言葉を再検索...">
                 <button id="search-btn" class="search-btn">検索</button>
             </div>
             <div id="suggest-box" class="suggest-box"></div>
@@ -106,13 +98,12 @@
         </div>
     </div>
 
-    <!-- データの読み込み -->
     <script src="data-kanji.js"></script>
     <script src="data-kokugo.js"></script>
     <script src="data-eiwa.js"></script>
 
     <script>
-        // 💡 ロゴを押した時の挙動（index.htmlに戻る）
+        // ロゴを押した時の挙動（index.htmlに戻る）
         document.getElementById('logo').addEventListener('click', function() {
             window.location.href = 'index.html';
         });
