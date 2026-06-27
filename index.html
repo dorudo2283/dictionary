@@ -26,21 +26,25 @@
 </head>
 <body>
 
-<!-- 上部共通バー -->
 <div class="header-bar">
     <a href="index.html" class="header-title">簡単辞典WEB</a>
     <div class="header-search-container">
-        <input type="text" id="headerKeyword" class="header-input" placeholder="キーワードを入力...">
+        <input type="text" id="headerKeyword" class="header-input" list="headerSuggestions" placeholder="キーワードを入力...">
         <button id="headerSearchBtn" class="header-btn">検索</button>
+        <datalist id="headerSuggestions"></datalist>
     </div>
 </div>
 
-<!-- メインコンテンツ -->
 <div class="main-container">
-    <h1>3部門 総合検索ポータル</h1>
-    <input type="text" id="centerKeyword" class="center-search-box" placeholder="調べたい言葉を入力してください...">
+    <h1>検索窓</h1>
+    <input type="text" id="centerKeyword" class="center-search-box" list="centerSuggestions" placeholder="調べたい言葉を入力してください...">
     <button id="centerSearchBtn" class="center-search-btn">検索する</button>
+    <datalist id="centerSuggestions"></datalist>
 </div>
+
+<script src="data-kanji.js"></script>
+<script src="data-kokugo.js"></script>
+<script src="data-eiwa.js"></script>
 
 <script>
     // 検索処理の共通化
@@ -66,6 +70,36 @@
     document.getElementById('centerKeyword').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') executeSearch(document.getElementById('centerKeyword').value);
     });
+
+    // 💡 各データベースから単語のキーを抽出して検索候補を生成するロジック
+    function initSearchSuggestions() {
+        const dKanji = (typeof dictKanji !== 'undefined') ? dictKanji : {};
+        const dKokugo = (typeof dictKokugo !== 'undefined') ? dictKokugo : {};
+        const dEiwa = (typeof dictEiwa !== 'undefined') ? dictEiwa : {};
+
+        // すべての辞典のキー（単語名）を1つの配列に集約
+        const allKeys = [
+            ...Object.keys(dKanji),
+            ...Object.keys(dKokugo),
+            ...Object.keys(dEiwa)
+        ];
+
+        // 重複する単語を排除して綺麗にする
+        const uniqueKeywords = Array.from(new Set(allKeys));
+
+        // <option>タグのHTMLを生成
+        const optionsHtml = uniqueKeywords.map(word => `<option value="${word}"></option>`).join('');
+
+        // 各datalistに流し込み
+        const centerList = document.getElementById('centerSuggestions');
+        if (centerList) centerList.innerHTML = optionsHtml;
+
+        const headerList = document.getElementById('headerSuggestions');
+        if (headerList) headerList.innerHTML = optionsHtml;
+    }
+
+    // ページ読み込み時にサジェストを初期化
+    window.addEventListener('DOMContentLoaded', initSearchSuggestions);
 </script>
 
 </body>
