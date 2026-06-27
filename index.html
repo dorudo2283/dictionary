@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>辞書WEB - ホーム</title>
+    <style>
+        body { font-family: sans-serif; margin: 0; background: #f5f7fa; color: #333; }
+        
+        /* 上部バー：左中央に大きめの検索窓 */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            padding: 15px 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .logo { font-weight: bold; font-size: 22px; margin-right: 40px; color: #2b6cb0; text-decoration: none; }
+        .search-container { flex-grow: 1; max-width: 600px; display: flex; }
+        
+        /* 大きめの検索欄（認知的な見つけやすさを重視） */
+        .search-input {
+            width: 100%;
+            padding: 14px 20px;
+            font-size: 16px;
+            border: 2px solid #cbd5e0;
+            border-radius: 6px 0 0 6px;
+            outline: none;
+        }
+        .search-input:focus { border-color: #2b6cb0; }
+        .search-btn {
+            padding: 0 25px;
+            background: #2b6cb0;
+            color: white;
+            border: none;
+            border-radius: 0 6px 6px 0;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .main-content { max-width: 800px; margin: 100px auto 0; text-align: center; padding: 0 20px; }
+        .main-content h1 { font-size: 36px; color: #2b6cb0; margin-bottom: 10px; }
+        .main-content p { color: #718096; font-size: 18px; }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <a href="index.html" class="logo">辞書WEB</a>
+        <div class="search-container">
+            <input type="text" id="search-word" class="search-input" placeholder="言葉を入力（例：東京）...">
+            <button id="search-btn" class="search-btn">検索</button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <h1>辞書WEB</h1>
+        <p>調べたい言葉を入力すると、3つの辞典の候補が表示されます。</p>
+    </div>
+
+    <script>
+        // 検索ボタンまたはEnterキーでlist.htmlに移動する
+        document.getElementById('search-btn').addEventListener('click', goToList);
+        document.getElementById('search-word').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') goToList();
+        });
+
+        function goToList() {
+            const word = document.getElementById('search-word').value.trim();
+            if (word !== "") {
+                // URLの末尾に「?word=検索文字」をつけてlist.htmlに飛ばす
+                window.location.href = `list.html?word=${encodeURIComponent(word)}`;
+            }
+        }
+    </script>
+</body>
+</html>c
