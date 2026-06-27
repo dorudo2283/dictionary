@@ -14,23 +14,43 @@ const todayTopics = {
     }
 };
 
-// 2. 言葉の「違い」と「使い方」コーナー
+// 2. 言葉の「違い」と「使い方」コーナー（★紹介文を追加）
 const wordDifferences = [
-    { title: "意思 と 意志 の違い", link: "list.html?word=意思" },
-    { title: "応対 と 対応 の違い", link: "list.html?word=応対" },
-    { title: "テレワーク と リモートワーク の違い", link: "list.html?word=テレワーク" },
-    { title: "パート と アルバイト の違い", link: "list.html?word=パート" },
-    { title: "恋 と 愛 の違い", link: "list.html?word=恋" },
-    { title: "「体験」と「経験」の違い", link: "list.html?word=体験" },
-    { title: "《づつ》と《ずつ》どちらが正しい表記か", link: "list.html?word=ずつ" }
+    { 
+        title: "意思 と 意志 の違い", 
+        desc: "「意思」は単なる思いや考えを表し、「意志」は『絶対に成し遂げる』という強い決意を表します。",
+        link: "list.html?word=意思" 
+    },
+    { 
+        title: "応対 と 対応 の違い", 
+        desc: "「応対」は人の相手をすること（接客など）、「対応」は物事や状況に合わせて行動すること（クレーム処理など）を指します。",
+        link: "list.html?word=応対" 
+    },
+    { 
+        title: "テレワーク と リモートワーク の違い", 
+        desc: "「テレワーク」は国や企業が推進する公式な呼称、「リモートワーク」はIT業界を中心に使われる、よりカジュアルな呼称です。",
+        link: "list.html?word=テレワーク" 
+    }
 ];
 
-// 3. 知っておきたいオトナの言い回しコーナー
+// 3. 知っておきたいオトナの言い回しコーナー（★紹介文を追加）
 const adultPhrases = [
-    { phrase: "感謝の念に堪えません", link: "list.html?word=感謝" },
-    { phrase: "早速ですが", link: "list.html?word=早速" },
-    { phrase: "おっしゃる通り", link: "list.html?word=おっしゃる通り" },
-    { phrase: "この度はご愁傷様です", link: "list.html?word=ご愁傷様" },
-    { phrase: "悪しからずご了承ください", link: "list.html?word=悪しからず" },
-    { phrase: "夜分遅くに失礼します", link: "list.html?word=夜分" }
+    { 
+        phrase: "感謝の念に堪えません", 
+        desc: "「ありがたいという気持ちが溢れて抑えきれない」という、ビジネスで使える最高峰の感謝表現です。",
+        link: "list.html?word=感謝" 
+    },
+    { 
+        phrase: "早速ですが", 
+        desc: "挨拶や前置きを省いて、本題にスッと切り込みたいときに重宝するスマートな接続詞です。",
+        link: "list.html?word=早速" 
+    },
+    { 
+        phrase: "おっしゃる通り", 
+        desc: "目上の人の意見に対して「その通りです」と強く同意を示すときの丁寧な言い回しです。",
+        link: "list.html?word=おっしゃる通り" 
+    }
 ];
+
+// 4. 運営からのお知らせ（★ここに追加）
+const siteNotice = "【お知らせ】トップページが大幅リニューアル！『言葉の紹介文』が読めるようになり、さらに便利になりました。";
