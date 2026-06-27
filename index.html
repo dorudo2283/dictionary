@@ -3,115 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>辞書WEB - ホーム</title>
+    <title>辞書WEB - ホームページ</title>
     <style>
-        body { font-family: sans-serif; margin: 0; background: #f5f7fa; color: #333; }
-        
-        .top-bar {
-            display: flex;
-            align-items: center;
-            background: #fff;
-            padding: 15px 30px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .logo { font-weight: bold; font-size: 22px; margin-right: 40px; color: #2b6cb0; text-decoration: none; }
-        
-        /* 予測変換の枠を正しく配置するためのコンテナ */
-        .search-wrapper { flex-grow: 1; max-width: 600px; position: relative; }
-        .search-container { display: flex; width: 100%; }
-        
-        .search-input {
-            width: 100%;
-            padding: 14px 20px;
-            font-size: 16px;
-            border: 2px solid #cbd5e0;
-            border-radius: 6px 0 0 6px;
-            outline: none;
-        }
-        .search-input:focus { border-color: #2b6cb0; }
-        .search-btn {
-            padding: 0 25px;
-            background: #2b6cb0;
-            color: white;
-            border: none;
-            border-radius: 0 6px 6px 0;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-        }
+        /* 全体設計：信頼感と清潔感のあるカラー（ネイビー×グレー） */
+        body { font-family: sans-serif; margin: 0; background: #f7fafc; color: #2d3748; line-height: 1.6; }
+        a { color: #2b6cb0; text-decoration: none; }
+        a:hover { text-decoration: underline; }
 
-        /* 🔮 予測変換（サジェスト）ボックスのデザイン */
+        /* 上部検索バー（大きめでインパクト重視） */
+        .top-header {
+            background: linear-gradient(135deg, #1a365d 0%, #2a4365 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .logo-title { font-size: 32px; font-weight: bold; margin-bottom: 20px; letter-spacing: 2px; }
+        .search-wrapper { max-width: 650px; margin: 0 auto; position: relative; }
+        .search-container { display: flex; width: 100%; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 6px; overflow: hidden; }
+        .search-input {
+            width: 100%; padding: 16px 20px; font-size: 18px; border: none; outline: none;
+        }
+        .search-btn {
+            padding: 0 30px; background: #ecc94b; color: #1a365d; border: none; cursor: pointer; font-size: 18px; font-weight: bold;
+        }
+        .search-btn:hover { background: #f6e05e; }
+
+        /* 予測変換ボックス */
         .suggest-box {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            background: white;
-            border: 1px solid #cbd5e0;
-            border-top: none;
-            border-radius: 0 0 6px 6px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            max-height: 200px;
-            overflow-y: auto;
-            z-index: 1000;
-            display: none; /* 初期は非表示 */
+            position: absolute; top: 100%; left: 0; width: 100%; background: white; color: #333;
+            border-radius: 0 0 6px 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); max-height: 200px; overflow-y: auto; z-index: 1000; text-align: left; display: none;
         }
-        .suggest-item {
-            padding: 12px 20px;
-            cursor: pointer;
-            font-size: 16px;
-        }
+        .suggest-item { padding: 12px 20px; cursor: pointer; font-size: 16px; }
         .suggest-item:hover { background: #edf2f7; color: #2b6cb0; }
 
-        .main-content { max-width: 800px; margin: 100px auto 0; text-align: center; padding: 0 20px; }
-        .main-content h1 { font-size: 36px; color: #2b6cb0; margin-bottom: 10px; }
-        .main-content p { color: #718096; font-size: 18px; }
+        /* メインレイアウト（グリッドシステムで綺麗に並べる） */
+        .portal-container { max-width: 1200px; margin: 30px auto; padding: 0 20px; display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
+        @media (max-width: 768px) { .portal-container { grid-template-columns: 1fr; } }
+
+        /* カードの共通デザイン（手触り感を意識） */
+        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.04); margin-bottom: 25px; }
+        .card-title { font-size: 18px; font-weight: bold; margin-top: 0; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 2px solid #e2e8f0; color: #1a365d; display: flex; align-items: center; gap: 8px; }
+
+        /* 今日のことばセクション */
+        .today-hero { background: #fffaf0; border: 1px solid #feebc8; }
+        .date-badge { background: #dd6b20; color: white; padding: 3px 8px; border-radius: 4px; font-size: 13px; font-weight: bold; }
+        .main-word { font-size: 26px; font-weight: bold; color: #dd6b20; margin: 10px 0; }
+        
+        /* リストスタイル */
+        .info-list { list-style: none; padding: 0; margin: 0; }
+        .info-list li { padding: 10px 0; border-bottom: 1px dashed #e2e8f0; font-size: 15px; }
+        .info-list li:last-child { border-bottom: none; }
+        
+        .sub-desc { font-size: 13px; color: #718096; margin-top: 4px; }
     </style>
 </head>
 <body>
 
-    <div class="top-bar">
-        <a href="index.html" class="logo">辞書WEB</a>
+    <div class="top-header">
+        <div class="logo-title">🔍 辞書WEB</div>
         <div class="search-wrapper">
             <div class="search-container">
-                <input type="text" id="search-word" class="search-input" placeholder="言葉を入力（例：東京、とうきょう、Tokyo）..." autocomplete="off">
+                <input type="text" id="search-word" class="search-input" placeholder="言葉の意味・違い・使い方を検索..." autocomplete="off">
                 <button id="search-btn" class="search-btn">検索</button>
             </div>
             <div id="suggest-box" class="suggest-box"></div>
         </div>
     </div>
 
-    <div class="main-content">
-        <h1>辞書WEB</h1>
-        <p>文字を入力すると、登録されている言葉の候補が自動で表示されます。</p>
+    <div class="portal-container">
+        
+        <div class="left-column">
+            <div class="card today-hero">
+                <div class="card-title">
+                    <span class="date-badge" id="lbl-date">--月--日</span>
+                    <span>今日のことば</span>
+                </div>
+                <div class="main-word"><a href="#" id="lnk-today-word">--</a></div>
+                <a href="#" class="sub-desc" style="color: #dd6b20; font-weight: bold;">» 今日のみんなのことばをすべて見る</a>
+            </div>
+
+            <div class="card">
+                <div class="card-title">🌿 季節のことば</div>
+                <ul class="info-list">
+                    <li>
+                        <strong style="color: #2b6cb0;" id="lbl-sekki">--</strong>
+                        <div class="sub-desc" id="desc-sekki">--</div>
+                    </li>
+                    <li>
+                        <strong style="color: #2b6cb0;" id="lbl-kou">--</strong>
+                        <div class="sub-desc" id="desc-kou">--</div>
+                    </li>
+                    <li>
+                        <span id="lbl-stone">--</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="right-column">
+            <div class="card">
+                <div class="card-title">🤔 言葉の「違い」と「使い方」</div>
+                <ul class="info-list" id="list-differences">
+                    </ul>
+            </div>
+
+            <div class="card">
+                <div class="card-title">💼 知っておきたい言い回し</div>
+                <ul class="info-list" id="list-phrases">
+                    </ul>
+            </div>
+        </div>
+
     </div>
 
     <script src="data-kanji.js"></script>
     <script src="data-kokugo.js"></script>
     <script src="data-eiwa.js"></script>
+    <script src="data-daily.js"></script>
 
     <script>
+        // --- 1. 画面初期化（ポータルデータの埋め込み） ---
+        window.addEventListener('DOMContentLoaded', function() {
+            // 今日のことば・季節の書き込み
+            document.getElementById('lbl-date').innerText = todayTopics.dateLabel;
+            document.getElementById('lnk-today-word').innerText = todayTopics.todayWord;
+            document.getElementById('lnk-today-word').href = todayTopics.todayWordLink;
+            
+            document.getElementById('lbl-sekki').innerText = todayTopics.season.sekki;
+            document.getElementById('desc-sekki').innerText = todayTopics.season.sekkiDesc;
+            document.getElementById('lbl-kou').innerText = todayTopics.season.kou;
+            document.getElementById('desc-kou').innerText = todayTopics.season.kouDesc;
+            document.getElementById('lbl-stone').innerText = todayTopics.season.stone;
+
+            // 言葉の違いリスト生成
+            const diffList = document.getElementById('list-differences');
+            wordDifferences.forEach(item => {
+                const li = document.createElement('li');
+                li.innerHTML = `<a href="${item.link}">» ${item.title}</a>`;
+                diffList.appendChild(li);
+            });
+
+            // 大人の言い回しリスト生成
+            const phraseList = document.getElementById('list-phrases');
+            adultPhrases.forEach(item => {
+                const li = document.createElement('li');
+                li.innerHTML = `<a href="${item.link}">・${item.phrase}</a>`;
+                phraseList.appendChild(li);
+            });
+        });
+
+        // --- 2. 予測変換（サジェスト）のロジック ---
         const searchInput = document.getElementById('search-word');
         const suggestBox = document.getElementById('suggest-box');
 
-        // 3つの辞書データの「全キー（単語）」を1つのリストにまとめる（重複は自動削除）
         const allWords = Array.from(new Set([
-            ...Object.keys(dictKanji),
-            ...Object.keys(dictKokugo),
-            ...Object.keys(dictEiwa)
+            ...Object.keys(dictKanji), ...Object.keys(dictKokugo), ...Object.keys(dictEiwa)
         ]));
 
-        // 文字が入力されたら予測変換を実行
         searchInput.addEventListener('input', function() {
             const query = this.value.trim().toLowerCase();
-            suggestBox.innerHTML = ''; // 一度お掃除
-            
-            if (query === '') {
-                suggestBox.style.display = 'none';
-                return;
-            }
+            suggestBox.innerHTML = '';
+            if (query === '') { suggestBox.style.display = 'none'; return; }
 
-            // 入力された文字が含まれる単語をフィルタリング（前方一致や部分一致）
             const filtered = allWords.filter(word => word.toLowerCase().includes(query));
 
             if (filtered.length > 0) {
@@ -119,7 +172,6 @@
                     const div = document.createElement('div');
                     div.className = 'suggest-item';
                     div.innerText = word;
-                    // 候補をクリックしたら、その文字を検索窓に入れて即画面遷移
                     div.addEventListener('click', function() {
                         searchInput.value = word;
                         suggestBox.style.display = 'none';
@@ -133,7 +185,6 @@
             }
         });
 
-        // 画面のどこか別の場所をクリックしたら候補を閉じる（認知的な邪魔を排除）
         document.addEventListener('click', function(e) {
             if (e.target !== searchInput) suggestBox.style.display = 'none';
         });
