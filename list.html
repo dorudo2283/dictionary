@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>簡単辞典WEB - 検索結果</title>
     <style>
         body { font-family: sans-serif; margin: 0; padding: 0; background: #f5f5f5; color: #333; }
@@ -11,8 +11,9 @@
         .header-bar { background: #0056b3; color: white; display: flex; align-items: center; padding: 10px 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
         .header-title { font-size: 20px; font-weight: bold; text-decoration: none; color: white; margin-right: 30px; }
         .header-title:hover { opacity: 0.9; }
-        .header-search-container { flex-grow: 1; max-width: 500px; display: flex; }
-        .header-input { width: 100%; padding: 8px 12px; font-size: 15px; border: none; border-radius: 4px 0 0 4px; outline: none; }
+        .header-search-container { flex-grow: 1; max-width: 500px; display: flex; position: relative; }
+        /* iOSの自動ズームを防ぐためフォントサイズを16pxに統一 */
+        .header-input { width: 100%; padding: 8px 12px; font-size: 16px; border: none; border-radius: 4px 0 0 4px; outline: none; box-sizing: border-box; }
         .header-btn { padding: 8px 16px; font-size: 15px; background: #003d82; color: white; border: none; border-radius: 0 4px 4px 0; cursor: pointer; font-weight: bold; }
         .header-btn:hover { background: #002654; }
 
@@ -39,6 +40,35 @@
         .word-content { font-size: 15px; line-height: 1.5; color: #333; padding-left: 5px; }
         
         .no-result { color: #cc0000; font-style: italic; text-align: center; padding: 10px 0; font-weight: bold; }
+
+        /* 💡 カスタムサジェストバー（白色のリスト）のスタイル */
+        .suggest-box {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: white;
+            border: 1px solid #ccc;
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .suggest-box li {
+            padding: 12px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            color: #333;
+        }
+        .suggest-box li:last-child { border-bottom: none; }
+        .suggest-box li:hover { background: #f0f5ff; color: #0056b3; }
     </style>
 </head>
 <body>
@@ -46,9 +76,9 @@
 <div class="header-bar">
     <a href="index.html" class="header-title">簡単辞典WEB</a>
     <div class="header-search-container">
-        <input type="text" id="headerKeyword" class="header-input" list="headerSuggestions" placeholder="キーワードを入力...">
+        <input type="text" id="headerKeyword" class="header-input" placeholder="キーワードを入力..." autocomplete="off">
         <button id="headerSearchBtn" class="header-btn">検索</button>
-        <datalist id="headerSuggestions"></datalist>
+        <ul id="headerSuggestBox" class="suggest-box"></ul>
     </div>
 </div>
 
@@ -154,18 +184,50 @@
         });
     }
 
-    // 💡 リスト画面の上部検索バー用にもサジェストを設定
+    // 💡 リスト画面の上部検索バー用カスタムサジェスト制御
     function initListSearchSuggestions() {
         const dKanji = (typeof dictKanji !== 'undefined') ? dictKanji : {};
         const dKokugo = (typeof dictKokugo !== 'undefined') ? dictKokugo : {};
         const dEiwa = (typeof dictEiwa !== 'undefined') ? dictEiwa : {};
-
         const allKeys = [...Object.keys(dKanji), ...Object.keys(dKokugo), ...Object.keys(dEiwa)];
-        const uniqueKeywords = Array.from(new Set(allKeys));
-        const optionsHtml = uniqueKeywords.map(word => `<option value="${word}"></option>`).join('');
+        const masterKeywords = Array.from(new Set(allKeys));
 
-        const headerList = document.getElementById('headerSuggestions');
-        if (headerList) headerList.innerHTML = optionsHtml;
+        const inputEl = document.getElementById('headerKeyword');
+        const boxEl = document.getElementById('headerSuggestBox');
+
+        inputEl.addEventListener('input', () => {
+            const query = inputEl.value.trim().toLowerCase();
+            boxEl.innerHTML = '';
+
+            if (!query) {
+                boxEl.style.display = 'none';
+                return;
+            }
+
+            const matched = masterKeywords.filter(key => key.toLowerCase().includes(query));
+
+            if (matched.length > 0) {
+                matched.forEach(word => {
+                    const li = document.createElement('li');
+                    li.textContent = word;
+                    li.addEventListener('click', () => {
+                        inputEl.value = word;
+                        boxEl.style.display = 'none';
+                        doReSearch();
+                    });
+                    boxEl.appendChild(li);
+                });
+                boxEl.style.display = 'block';
+            } else {
+                boxEl.style.display = 'none';
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (e.target !== inputEl && e.target !== boxEl) {
+                boxEl.style.display = 'none';
+            }
+        });
     }
 
     window.addEventListener('DOMContentLoaded', initListSearchSuggestions);
