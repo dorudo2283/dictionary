@@ -3,225 +3,221 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>辞書WEB - ポータル</title>
+    <title>3in1 漢字・国語・英和 辞典</title>
     <style>
-        body { font-family: sans-serif; margin: 0; background: #f7fafc; color: #2d3748; line-height: 1.6; }
-        
-        /* お知らせバー */
-        .notice-bar {
-            background: #fffaf0; border-bottom: 1px solid #feebc8; color: #dd6b20;
-            padding: 10px 20px; text-align: center; font-size: 14px; font-weight: bold;
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --border-radius: 12px;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
-        /* 上部検索バー */
-        .top-header {
-            background: linear-gradient(135deg, #1a365d 0%, #2a4365 100%);
-            color: white; padding: 40px 20px; text-align: center;
+        body {
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        /* 💡 ロゴをカーソルがポインターになるようにし、クリック可能に */
-        .logo-title { font-size: 32px; font-weight: bold; margin-bottom: 20px; letter-spacing: 2px; cursor: pointer; display: inline-block; }
-        
-        .search-wrapper { max-width: 650px; margin: 0 auto; position: relative; }
-        .search-container { display: flex; width: 100%; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 6px; overflow: hidden; }
-        .search-input { width: 100%; padding: 16px 20px; font-size: 18px; border: none; outline: none; color: #333; }
-        .search-btn { padding: 0 30px; background: #ecc94b; color: #1a365d; border: none; cursor: pointer; font-size: 18px; font-weight: bold; }
-        .search-btn:hover { background: #f6e05e; }
 
-        /* 予測変換ボックス */
-        .suggest-box {
-            position: absolute; top: 100%; left: 0; width: 100%; background: white; color: #333;
-            border-radius: 0 0 6px 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); max-height: 200px; overflow-y: auto; z-index: 1000; text-align: left; display: none;
+        header {
+            text-align: center;
+            margin-bottom: 30px;
         }
-        .suggest-item { padding: 12px 20px; cursor: pointer; font-size: 16px; }
-        .suggest-item:hover { background: #edf2f7; color: #2b6cb0; }
 
-        /* メインレイアウト */
-        .portal-container { max-width: 1200px; margin: 30px auto; padding: 0 20px; display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
-        @media (max-width: 768px) { .portal-container { grid-template-columns: 1fr; } }
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
 
-        /* カードデザイン */
-        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.04); margin-bottom: 25px; }
-        .card-title { font-size: 18px; font-weight: bold; margin-top: 0; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 2px solid #e2e8f0; color: #1a365d; }
+        .search-container {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 40px;
+        }
 
-        /* 今日のことば */
-        .today-hero { background: #fffaf0; border: 1px solid #feebc8; }
-        .date-badge { background: #dd6b20; color: white; padding: 3px 8px; border-radius: 4px; font-size: 13px; font-weight: bold; margin-right: 10px; }
-        .main-word { font-size: 26px; font-weight: bold; color: #dd6b20; margin: 10px 0; }
-        
-        /* 特集リスト（純粋な表示用レイアウト） */
-        .info-list { list-style: none; padding: 0; margin: 0; }
-        .info-list li { border-bottom: 1px dashed #e2e8f0; padding: 12px 10px; }
-        .info-list li:last-child { border-bottom: none; }
-        
-        .item-title { font-weight: bold; color: #2d3748; font-size: 16px; }
-        .item-desc { font-size: 13px; color: #718096; margin-top: 4px; }
-        .sub-desc { font-size: 13px; color: #718096; margin-top: 4px; display: block; }
+        #search-input {
+            flex: 1;
+            padding: 15px 20px;
+            font-size: 1.2rem;
+            border: 2px solid #ddd;
+            border-radius: var(--border-radius);
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        #search-input:focus {
+            border-color: var(--accent-color);
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 25px;
+            border-top: 6px solid var(--primary-color);
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            color: var(--primary-color);
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            font-size: 1.5rem;
+        }
+
+        .card-content {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            min-height: 150px;
+        }
+
+        /* 3つのカードごとにテーマカラーを変える演出 */
+        #card-kanji { border-top-color: #e74c3c; }   /* 赤：漢字 */
+        #card-kokugo { border-top-color: #f39c12; }  /* 橙：国語 */
+        #card-eiwa { border-top-color: #2ecc71; }    /* 緑：英和 */
+
+        p {
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
 
-    <!-- お知らせバー -->
-    <div class="notice-bar" id="site-notice">📢 お知らせ読み込み中...</div>
+    <header>
+        <h1>3in1 漢字・国語・英和 辞典</h1>
+        <p>調べたい単語を入力してください（ひらがな、カタカナ、漢字、英語すべて対応）</p>
+    </header>
 
-    <!-- 検索ポータルヘッダー -->
-    <div class="top-header">
-        <!-- 💡 id="logo" を追加してクリック可能に -->
-        <div class="logo-title" id="logo">🔍 辞書WEB</div>
-        <div class="search-wrapper">
-            <div class="search-container">
-                <input type="text" id="search-word" class="search-input" placeholder="言葉の意味・違い・使い方を検索..." autocomplete="off">
-                <button id="search-btn" class="search-btn">検索</button>
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="例: 東京、とうきょう、Apple、アップル...">
+        <button onclick="searchDict()">検索</button>
+    </div>
+
+    <div class="results-grid">
+        <!-- 漢字カード -->
+        <div class="card" id="card-kanji">
+            <h2>漢字辞典</h2>
+            <div class="card-content" id="kanji-result">
+                <p style="color: #888;">ここに検索結果が表示されます</p>
             </div>
-            <div id="suggest-box" class="suggest-box"></div>
+        </div>
+
+        <!-- 国語カード -->
+        <div class="card" id="card-kokugo">
+            <h2>国語辞典</h2>
+            <div class="card-content" id="kokugo-result">
+                <p style="color: #888;">ここに検索結果が表示されます</p>
+            </div>
+        </div>
+
+        <!-- 英和カード -->
+        <div class="card" id="card-eiwa">
+            <h2>英和辞典</h2>
+            <div class="card-content" id="eiwa-result">
+                <p style="color: #888;">ここに検索結果が表示されます</p>
+            </div>
         </div>
     </div>
 
-    <!-- ポータルコンテンツエリア -->
-    <div class="portal-container">
-        
-        <!-- 左カラム -->
-        <div class="left-column">
-            <div class="card today-hero">
-                <div class="card-title">
-                    <span class="date-badge" id="lbl-date">--月--日</span><span>今日のことば</span>
-                </div>
-                <div class="main-word" id="lbl-today-word" style="color: #dd6b20;">--</div>
-                <div class="sub-desc" style="color: #dd6b20; font-weight: bold;">» 今日のみんなのことばをすべて見る</div>
-            </div>
-
-            <div class="card">
-                <div class="card-title">🌿 季節のことば</div>
-                <ul class="info-list">
-                    <li>
-                        <strong style="color: #2b6cb0;" id="lbl-sekki">--</strong>
-                        <div class="sub-desc" id="desc-sekki">--</div>
-                    </li>
-                    <li>
-                        <strong style="color: #2b6cb0;" id="lbl-kou">--</strong>
-                        <div class="sub-desc" id="desc-kou">--</div>
-                    </li>
-                    <li>
-                        <span id="lbl-stone">--</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- 右カラム -->
-        <div class="right-column">
-            <div class="card">
-                <div class="card-title">🤔 言葉の「違い」と「使い方」</div>
-                <ul class="info-list" id="list-differences">
-                    <!-- JSで自動生成 -->
-                </ul>
-            </div>
-
-            <div class="card">
-                <div class="card-title">💼 知っておきたいオトナの言い回し</div>
-                <ul class="info-list" id="list-phrases">
-                    <!-- JSで自動生成 -->
-                </ul>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- データファイルの読み込み -->
+    <!-- 各データベースファイルの読み込み -->
     <script src="data-kanji.js"></script>
     <script src="data-kokugo.js"></script>
     <script src="data-eiwa.js"></script>
-    <script src="data-daily.js"></script>
 
     <script>
-        // --- 1. 画面初期化（データの埋め込み） ---
-        window.addEventListener('DOMContentLoaded', function() {
-            // 💡 ロゴをクリックしたら再読み込みしてトップに戻る
-            document.getElementById('logo').addEventListener('click', function() {
-                window.location.href = 'index.html';
-            });
-
-            // お知らせの埋め込み
-            document.getElementById('site-notice').innerText = siteNotice;
-
-            // 今日のことばの埋め込み
-            document.getElementById('lbl-date').innerText = todayTopics.dateLabel;
-            document.getElementById('lbl-today-word').innerText = todayTopics.todayWord;
-            
-            document.getElementById('lbl-sekki').innerText = todayTopics.season.sekki;
-            document.getElementById('desc-sekki').innerText = todayTopics.season.sekkiDesc;
-            document.getElementById('lbl-kou').innerText = todayTopics.season.kou;
-            document.getElementById('desc-kou').innerText = todayTopics.season.kouDesc;
-            document.getElementById('lbl-stone').innerText = todayTopics.season.stone;
-
-            // 言葉の違いリスト生成（リンクなし・表示のみ）
-            const diffList = document.getElementById('list-differences');
-            wordDifferences.forEach(item => {
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    <div class="item-title">» ${item.title}</div>
-                    <div class="item-desc">${item.desc}</div>
-                `;
-                diffList.appendChild(li);
-            });
-
-            // 大人の言い回しリスト生成（リンクなし・表示のみ）
-            const phraseList = document.getElementById('list-phrases');
-            adultPhrases.forEach(item => {
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    <div class="item-title">・${item.phrase}</div>
-                    <div class="item-desc">${item.desc}</div>
-                `;
-                phraseList.appendChild(li);
-            });
-        });
-
-        // --- 2. 予測変換のロジック ---
-        const searchInput = document.getElementById('search-word');
-        const suggestBox = document.getElementById('suggest-box');
-
-        const allWords = Array.from(new Set([
-            ...Object.keys(dictKanji), ...Object.keys(dictKokugo), ...Object.keys(dictEiwa)
-        ]));
-
-        searchInput.addEventListener('input', function() {
-            const query = this.value.trim().toLowerCase();
-            suggestBox.innerHTML = '';
-            if (query === '') { suggestBox.style.display = 'none'; return; }
-
-            const filtered = allWords.filter(word => word.toLowerCase().includes(query));
-
-            if (filtered.length > 0) {
-                filtered.forEach(word => {
-                    const div = document.createElement('div');
-                    div.className = 'suggest-item';
-                    div.innerText = word;
-                    div.addEventListener('click', function() {
-                        searchInput.value = word;
-                        suggestBox.style.display = 'none';
-                        goToList();
-                    });
-                    suggestBox.appendChild(div);
-                });
-                suggestBox.style.display = 'block';
-            } else {
-                suggestBox.style.display = 'none';
+        // エンターキーでも検索できるようにする設定
+        document.getElementById("search-input").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                searchDict();
             }
         });
 
-        document.addEventListener('click', function(e) {
-            if (e.target !== searchInput) suggestBox.style.display = 'none';
-        });
+        // 検索処理メインロジック
+        function searchDict() {
+            const inputElement = document.getElementById("search-input"); 
+            if (!inputElement) return;
+            
+            // 入力された文字の前後の空白を消し、英語は大文字小文字を無視するために小文字化
+            const query = inputElement.value.trim().toLowerCase();
+            if (query === "") {
+                alert("検索ワードを入力してください");
+                return;
+            }
 
-        document.getElementById('search-btn').addEventListener('click', goToList);
-        searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') goToList();
-        });
+            let targetKey = null;
 
-        function goToList() {
-            const word = searchInput.value.trim();
-            if (word !== "") {
-                window.location.href = `list.html?word=${encodeURIComponent(word)}`;
+            // data-kanji.js 内の search 配列をループしてマッチする単語を探す
+            for (let key in dictKanji) {
+                const item = dictKanji[key];
+                
+                // データベース内の検索ワードリストを一つずつ小文字化して、入力文字と完全一致するかチェック
+                const isMatched = item.search && item.search.some(word => word.toLowerCase() === query);
+
+                if (isMatched) {
+                    targetKey = key; // 「東京」や「Apple」といった本来のキーを特定
+                    break;
+                }
+            }
+
+            // 画面の表示エリアを取得
+            const kanjiResult = document.getElementById("kanji-result");
+            const kokugoResult = document.getElementById("kokugo-result");
+            const eiwaResult = document.getElementById("eiwa-result");
+
+            if (targetKey) {
+                // マッチした単語があれば表示（漢字は .html の中身、他2つは前回の文字列データをそのまま表示）
+                kanjiResult.innerHTML = dictKanji[targetKey].html;
+                kokugoResult.innerHTML = dictKokugo[targetKey] || "<p>データがありません</p>";
+                eiwaResult.innerHTML = dictEiwa[targetKey] || "<p>データがありません</p>";
+            } else {
+                // 見つからなかった場合のメッセージ
+                const noMatchMsg = "<p style='color:#e74c3c; font-weight:bold;'>該当する単語はありません</p>";
+                kanjiResult.innerHTML = noMatchMsg;
+                kokugoResult.innerHTML = noMatchMsg;
+                eiwaResult.innerHTML = noMatchMsg;
             }
         }
     </script>
