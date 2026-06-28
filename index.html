@@ -5,28 +5,94 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>簡単辞典WEB - ポータル</title>
     <style>
-        body { font-family: sans-serif; margin: 0; padding: 0; background: #f5f5f5; color: #333; }
+        body { 
+            font-family: sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            background: #f5f5f5; 
+            color: #333; 
+        }
         
         /* 上部共通バー */
-        .header-bar { background: #0056b3; color: white; display: flex; align-items: center; padding: 10px 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .header-title { font-size: 20px; font-weight: bold; text-decoration: none; color: white; margin-right: 30px; }
-        .header-title:hover { opacity: 0.9; }
-        .header-search-container { flex-grow: 1; max-width: 500px; display: flex; position: relative; }
-        /* iOSの自動ズームを防ぐためフォントサイズを16pxに統一 */
-        .header-input { width: 100%; padding: 8px 12px; font-size: 16px; border: none; border-radius: 4px 0 0 4px; outline: none; box-sizing: border-box; }
-        .header-btn { padding: 8px 16px; font-size: 15px; background: #003d82; color: white; border: none; border-radius: 0 4px 4px 0; cursor: pointer; font-weight: bold; }
-        .header-btn:hover { background: #002654; }
+        .header-bar { 
+            background: #0056b3; 
+            color: white; 
+            display: flex; 
+            align-items: center; 
+            padding: 10px 20px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-title { 
+            font-size: 20px; 
+            font-weight: bold; 
+            text-decoration: none; 
+            color: white; 
+            margin-right: 20px; 
+            white-space: nowrap;
+        }
+        .header-search-container { 
+            flex-grow: 1; 
+            max-width: 500px; 
+            display: flex; 
+            position: relative; 
+        }
+        .header-input { 
+            width: 100%; 
+            padding: 10px 12px; 
+            font-size: 16px; 
+            border: none; 
+            border-radius: 4px 0 0 4px; 
+            outline: none; 
+            box-sizing: border-box; 
+        }
+        .header-btn { 
+            padding: 10px 20px; 
+            font-size: 15px; 
+            background: #003d82; 
+            color: white; 
+            border: none; 
+            border-radius: 0 4px 4px 0; 
+            cursor: pointer; 
+            font-weight: bold; 
+        }
 
-        /* メインコンテンツエリア */
-        .main-container { max-width: 600px; margin: 80px auto 0; background: white; padding: 40px 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; }
-        h1 { font-size: 24px; margin-bottom: 25px; color: #333; }
-        .search-wrapper { position: relative; width: 100%; margin-bottom: 20px; text-align: left; }
-        /* iOSの自動ズームを防ぐためフォントサイズを18pxに（16px以上を確保） */
-        .center-search-box { width: 100%; padding: 15px; font-size: 18px; border: 2px solid #0056b3; border-radius: 6px; box-sizing: border-box; outline: none; }
-        .center-search-btn { width: 100%; padding: 15px; font-size: 18px; background: #0056b3; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: background 0.2s; }
-        .center-search-btn:hover { background: #004085; }
+        /* メインコンテンツ */
+        .main-container { 
+            max-width: 600px; 
+            margin: 40px auto 0; 
+            background: white; 
+            padding: 40px 30px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+            text-align: center; 
+        }
+        h1 { 
+            font-size: 24px; 
+            margin-bottom: 30px; 
+            color: #333; 
+        }
 
-        /* 💡 カスタムサジェストバー（白色のリスト）のスタイル */
+        /* お知らせエリア */
+        .notice {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: left;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        .notice h2 {
+            margin: 0 0 12px 0;
+            font-size: 18px;
+            color: #0056b3;
+        }
+
+        /* サジェスト */
         .suggest-box {
             position: absolute;
             top: 100%;
@@ -37,7 +103,7 @@
             border-top: none;
             border-radius: 0 0 6px 6px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            max-height: 200px;
+            max-height: 240px;
             overflow-y: auto;
             z-index: 1000;
             display: none;
@@ -50,14 +116,11 @@
             font-size: 16px;
             cursor: pointer;
             border-bottom: 1px solid #eee;
-            color: #333;
         }
         .suggest-box li:last-child { border-bottom: none; }
-        .suggest-box li:hover { background: #f0f5ff; color: #0056b3; }
-
-        /* ヘッダー用サジェストボックスの微調整 */
-        .header-search-container .suggest-box {
-            border-radius: 0 0 4px 4px;
+        .suggest-box li:hover { 
+            background: #f0f5ff; 
+            color: #0056b3; 
         }
     </style>
 </head>
@@ -73,12 +136,14 @@
 </div>
 
 <div class="main-container">
-    <h1>簡単辞典WEB-検索窓</h1>
-    <div class="search-wrapper">
-        <input type="text" id="centerKeyword" class="center-search-box" placeholder="調べたい言葉を入力してください...">
-        <ul id="centerSuggestBox" class="suggest-box"></ul>
+    <h1>簡単辞典WEB</h1>
+    
+    <div class="notice">
+        <h2>📢 お知らせ</h2>
+        <p>・漢字・国語・英和の3種類の辞典を横断検索できます。<br>
+           ・入力中に候補が表示されます（最大10件）。<br>
+           ・候補をタップすると即座に検索します。</p>
     </div>
-    <button id="centerSearchBtn" class="center-search-btn">検索する</button>
 </div>
 
 <script src="data-kanji.js"></script>
@@ -86,7 +151,6 @@
 <script src="data-eiwa.js"></script>
 
 <script>
-    // 検索処理の共通化
     function executeSearch(value) {
         const val = value.trim();
         if (val) {
@@ -94,23 +158,17 @@
         }
     }
 
-    // 上部バーの検索イベント
-    document.getElementById('headerSearchBtn').addEventListener('click', () => {
-        executeSearch(document.getElementById('headerKeyword').value);
-    });
-    document.getElementById('headerKeyword').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') executeSearch(document.getElementById('headerKeyword').value);
-    });
+    // 簡易類似度でソート（前方一致を強く優先）
+    function getSimilarityScore(word, query) {
+        const lowerWord = word.toLowerCase();
+        const lowerQuery = query.toLowerCase();
+        
+        if (lowerWord === lowerQuery) return 1000;
+        if (lowerWord.startsWith(lowerQuery)) return 500;
+        if (lowerWord.includes(lowerQuery)) return 100 - lowerWord.indexOf(lowerQuery);
+        return 0;
+    }
 
-    // 中央エリアの検索イベント
-    document.getElementById('centerSearchBtn').addEventListener('click', () => {
-        executeSearch(document.getElementById('centerKeyword').value);
-    });
-    document.getElementById('centerKeyword').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') executeSearch(document.getElementById('centerKeyword').value);
-    });
-
-    // 💡 辞書データからすべての登録キーワード（ユニーク）を抽出
     function getKeywords() {
         const dKanji = (typeof dictKanji !== 'undefined') ? dictKanji : {};
         const dKokugo = (typeof dictKokugo !== 'undefined') ? dictKokugo : {};
@@ -121,7 +179,6 @@
 
     const masterKeywords = getKeywords();
 
-    // 💡 白色のカスタムサジェストバーを制御するロジック
     function setupCustomSuggest(inputId, suggestBoxId) {
         const inputEl = document.getElementById(inputId);
         const boxEl = document.getElementById(suggestBoxId);
@@ -130,23 +187,28 @@
             const query = inputEl.value.trim().toLowerCase();
             boxEl.innerHTML = '';
 
-            if (!query) {
+            if (!query || query.length < 1) {
                 boxEl.style.display = 'none';
                 return;
             }
 
-            // 部分一致するキーワードをフィルタリング
-            const matched = masterKeywords.filter(key => key.toLowerCase().includes(query));
+            const matched = masterKeywords
+                .map(word => ({
+                    word: word,
+                    score: getSimilarityScore(word, query)
+                }))
+                .filter(item => item.score > 0)
+                .sort((a, b) => b.score - a.score)
+                .slice(0, 10);  // 最大10件
 
             if (matched.length > 0) {
-                matched.forEach(word => {
+                matched.forEach(item => {
                     const li = document.createElement('li');
-                    li.textContent = word;
-                    // タップ（クリック）されたら即座に検索画面へ飛ばしてフリクションを解消
+                    li.textContent = item.word;
                     li.addEventListener('click', () => {
-                        inputEl.value = word;
+                        inputEl.value = item.word;
                         boxEl.style.display = 'none';
-                        executeSearch(word);
+                        executeSearch(item.word);
                     });
                     boxEl.appendChild(li);
                 });
@@ -156,16 +218,22 @@
             }
         });
 
-        // 画面の他の場所をクリックしたときにリストを閉じる
+        // 画面外クリックで閉じる
         document.addEventListener('click', (e) => {
-            if (e.target !== inputEl && e.target !== boxEl) {
+            if (e.target !== inputEl && !boxEl.contains(e.target)) {
                 boxEl.style.display = 'none';
             }
         });
     }
 
-    // ポータル画面の2つの入力欄にサジェストを適用
-    setupCustomSuggest('centerKeyword', 'centerSuggestBox');
+    // イベント設定
+    document.getElementById('headerSearchBtn').addEventListener('click', () => {
+        executeSearch(document.getElementById('headerKeyword').value);
+    });
+    document.getElementById('headerKeyword').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') executeSearch(document.getElementById('headerKeyword').value);
+    });
+
     setupCustomSuggest('headerKeyword', 'headerSuggestBox');
 </script>
 
