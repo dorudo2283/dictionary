@@ -37,8 +37,8 @@
     <div class="notice">
         <h2>📢 お知らせ</h2>
         <p>・漢字・国語・英和の3種類の辞典を横断検索できます。<br>
-           ・入力中に候補が表示されます。<br>
-           ・検索ボタンで確実に検索できます。</p>
+           ・検索ボタンで確実に検索できます。<br>
+           ・入力中に候補が表示されます。</p>
     </div>
 </div>
 
@@ -69,7 +69,11 @@
         const dEiwa = (typeof dictEiwa !== 'undefined') ? dictEiwa : {};
         const terms = new Set();
 
-        [dKanji, dKokugo, dEiwa].forEach(dict => {
+        // dictKanji（文字列形式）
+        Object.keys(dKanji).forEach(key => terms.add(key));
+
+        // dictKokugo と dictEiwa（オブジェクト形式）
+        [dKokugo, dEiwa].forEach(dict => {
             Object.keys(dict).forEach(key => {
                 terms.add(key);
                 if (dict[key] && dict[key].search && Array.isArray(dict[key].search)) {
@@ -79,6 +83,7 @@
                 }
             });
         });
+
         return Array.from(terms);
     }
 
@@ -127,11 +132,10 @@
         });
     }
 
-    // 検索ボタンとEnterキー対応
+    // 検索ボタンとEnterキー
     document.getElementById('headerSearchBtn').addEventListener('click', () => {
         executeSearch(document.getElementById('headerKeyword').value);
     });
-
     document.getElementById('headerKeyword').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             executeSearch(document.getElementById('headerKeyword').value);
