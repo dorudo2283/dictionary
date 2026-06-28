@@ -5,116 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>簡単辞典WEB - ポータル</title>
     <style>
-        body { 
-            font-family: sans-serif; 
-            margin: 0; 
-            padding: 0; 
-            background: #f5f5f5; 
-            color: #333; 
-        }
-        .header-bar { 
-            background: #0056b3; 
-            color: white; 
-            display: flex; 
-            align-items: center; 
-            padding: 10px 20px; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .header-title { 
-            font-size: 20px; 
-            font-weight: bold; 
-            text-decoration: none; 
-            color: white; 
-            margin-right: 20px; 
-            white-space: nowrap;
-        }
-        .header-search-container { 
-            flex-grow: 1; 
-            max-width: 500px; 
-            display: flex; 
-            position: relative; 
-        }
-        .header-input { 
-            width: 100%; 
-            padding: 10px 12px; 
-            font-size: 16px; 
-            border: none; 
-            border-radius: 4px 0 0 4px; 
-            outline: none; 
-            box-sizing: border-box; 
-        }
-        .header-btn { 
-            padding: 10px 20px; 
-            font-size: 15px; 
-            background: #003d82; 
-            color: white; 
-            border: none; 
-            border-radius: 0 4px 4px 0; 
-            cursor: pointer; 
-            font-weight: bold; 
-        }
-        .main-container { 
-            max-width: 600px; 
-            margin: 40px auto 0; 
-            background: white; 
-            padding: 40px 30px; 
-            border-radius: 8px; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
-            text-align: center; 
-        }
-        h1 { 
-            font-size: 24px; 
-            margin-bottom: 30px; 
-            color: #333; 
-        }
-        .notice {
-            background: #f8f9fa;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 25px;
-            margin-bottom: 30px;
-            text-align: left;
-            font-size: 15px;
-            line-height: 1.6;
-        }
-        .notice h2 {
-            margin: 0 0 12px 0;
-            font-size: 18px;
-            color: #0056b3;
-        }
-        .suggest-box {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            background: white;
-            border: 1px solid #ccc;
-            border-top: none;
-            border-radius: 0 0 6px 6px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            max-height: 240px;
-            overflow-y: auto;
-            z-index: 1000;
-            display: none;
-            margin: 0;
-            padding: 0;
-            list-style: none;
-        }
-        .suggest-box li {
-            padding: 12px 15px;
-            font-size: 16px;
-            cursor: pointer;
-            border-bottom: 1px solid #eee;
-            color: #222;
-        }
+        body { font-family: sans-serif; margin: 0; padding: 0; background: #f5f5f5; color: #333; }
+        .header-bar { background: #0056b3; color: white; display: flex; align-items: center; padding: 10px 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+        .header-title { font-size: 20px; font-weight: bold; text-decoration: none; color: white; margin-right: 20px; white-space: nowrap; }
+        .header-search-container { flex-grow: 1; max-width: 500px; display: flex; position: relative; }
+        .header-input { width: 100%; padding: 10px 12px; font-size: 16px; border: none; border-radius: 4px 0 0 4px; outline: none; box-sizing: border-box; }
+        .header-btn { padding: 10px 20px; font-size: 15px; background: #003d82; color: white; border: none; border-radius: 0 4px 4px 0; cursor: pointer; font-weight: bold; }
+        .main-container { max-width: 600px; margin: 40px auto 0; background: white; padding: 40px 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; }
+        h1 { font-size: 24px; margin-bottom: 30px; color: #333; }
+        .notice { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 8px; padding: 25px; margin-bottom: 30px; text-align: left; font-size: 15px; line-height: 1.6; }
+        .notice h2 { margin: 0 0 12px 0; font-size: 18px; color: #0056b3; }
+        .suggest-box { position: absolute; top: 100%; left: 0; width: 100%; background: white; border: 1px solid #ccc; border-top: none; border-radius: 0 0 6px 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-height: 240px; overflow-y: auto; z-index: 1000; display: none; margin: 0; padding: 0; list-style: none; }
+        .suggest-box li { padding: 12px 15px; font-size: 16px; cursor: pointer; border-bottom: 1px solid #eee; color: #222; }
         .suggest-box li:last-child { border-bottom: none; }
-        .suggest-box li:hover { 
-            background: #f0f5ff; 
-            color: #0056b3; 
-        }
+        .suggest-box li:hover { background: #f0f5ff; color: #0056b3; }
     </style>
 </head>
 <body>
@@ -133,8 +37,8 @@
     <div class="notice">
         <h2>📢 お知らせ</h2>
         <p>・漢字・国語・英和の3種類の辞典を横断検索できます。<br>
-           ・入力中に候補が表示されます（最大10件）。<br>
-           ・候補をタップすると即座に検索します。</p>
+           ・入力中に候補が表示されます。<br>
+           ・検索ボタンで確実に検索できます。</p>
     </div>
 </div>
 
@@ -163,20 +67,18 @@
         const dKanji = (typeof dictKanji !== 'undefined') ? dictKanji : {};
         const dKokugo = (typeof dictKokugo !== 'undefined') ? dictKokugo : {};
         const dEiwa = (typeof dictEiwa !== 'undefined') ? dictEiwa : {};
-        
         const terms = new Set();
 
         [dKanji, dKokugo, dEiwa].forEach(dict => {
             Object.keys(dict).forEach(key => {
                 terms.add(key);
-                if (dict[key].search && Array.isArray(dict[key].search)) {
+                if (dict[key] && dict[key].search && Array.isArray(dict[key].search)) {
                     dict[key].search.forEach(term => {
                         if (typeof term === 'string') terms.add(term);
                     });
                 }
             });
         });
-
         return Array.from(terms);
     }
 
@@ -196,10 +98,7 @@
             }
 
             const matched = masterKeywords
-                .map(word => ({
-                    word: word,
-                    score: getSimilarityScore(word, query)
-                }))
+                .map(word => ({ word, score: getSimilarityScore(word, query) }))
                 .filter(item => item.score > 0)
                 .sort((a, b) => b.score - a.score)
                 .slice(0, 10);
@@ -227,6 +126,17 @@
             }
         });
     }
+
+    // 検索ボタンとEnterキー対応
+    document.getElementById('headerSearchBtn').addEventListener('click', () => {
+        executeSearch(document.getElementById('headerKeyword').value);
+    });
+
+    document.getElementById('headerKeyword').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            executeSearch(document.getElementById('headerKeyword').value);
+        }
+    });
 
     setupCustomSuggest('headerKeyword', 'headerSuggestBox');
 </script>
