@@ -9,33 +9,34 @@
         .navbar { background: #333; color: white; padding: 10px 20px; display: flex; align-items: center; position: sticky; top: 0; z-index: 100; }
         .logo { font-size: 24px; font-weight: bold; cursor: pointer; margin-right: 20px; }
         .search-container { position: relative; flex: 1; max-width: 600px; }
-        .search-bar { width: 100%; padding: 10px; border: none; border-radius: 5px; font-size: 16px; }
+        .search-bar { width: 100%; padding: 10px; border: none; border-radius: 5px; font-size: 16px; box-sizing: border-box; }
         .clear-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 18px; cursor: pointer; color: #666; }
         .suggestions { position: absolute; top: 100%; left: 0; width: 100%; background: white; border: 1px solid #ddd; max-height: 300px; overflow-y: auto; z-index: 200; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .suggestion-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #eee; }
+        .suggestion-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #eee; color: #333; }
         .suggestion-item:hover { background: #f0f0f0; }
         .main-content { padding: 20px; max-width: 1200px; margin: 0 auto; }
         .tabs { display: flex; margin-bottom: 20px; }
         .tab { padding: 10px 20px; cursor: pointer; background: #ddd; margin-right: 5px; border-radius: 5px 5px 0 0; }
-        .tab.active { background: white; border-bottom: 2px solid #333; }
+        .tab.active { background: white; border-bottom: 2px solid #333; font-weight: bold; }
         .content-area { display: none; }
         .content-area.active { display: block; }
         .word-list { list-style: none; padding: 0; }
-        .word-item { margin: 10px 0; padding: 10px; background: white; border-radius: 5px; cursor: pointer; }
+        .word-item { margin: 10px 0; padding: 10px; background: white; border-radius: 5px; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .result-item { background: white; padding: 15px; margin: 10px 0; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
     <div class="navbar">
-        <div class="logo" onclick="window.location.reload()">簡単辞典WEB</div>
+        <div class="logo" onclick="initPage()">簡単辞典WEB</div>
         <div class="search-container">
-            <input type="text" id="searchInput" class="search-bar" placeholder="単語を検索..." onkeyup="handleSearch(event)">
+            <input type="text" id="searchInput" class="search-bar" placeholder="単語や意味を検索..." onkeyup="handleSearch(event)">
             <button class="clear-btn" onclick="clearSearch()">×</button>
             <div id="suggestions" class="suggestions"></div>
         </div>
     </div>
 
     <div class="main-content">
-        <div class="tabs">
+        <div class="tabs" id="tabsMenu">
             <div class="tab active" onclick="switchTab(0)">ホーム</div>
             <div class="tab" onclick="switchTab(1)">日本語辞典</div>
             <div class="tab" onclick="switchTab(2)">英語辞典</div>
@@ -43,27 +44,41 @@
 
         <div id="home" class="content-area active">
             <h1>ようこそ、簡単辞典WEBへ</h1>
-            <p>検索バーから単語を入力（Enterで検索）</p>
+            <p>検索バーから単語を入力（Enter、または候補をクリックで検索）</p>
         </div>
 
         <div id="jp" class="content-area">
-            <h2>日本語辞典</h2>
+            <h2>日本語辞典 一覧</h2>
             <div id="jp-content"></div>
         </div>
 
         <div id="en" class="content-area">
-            <h2>英語辞典</h2>
+            <h2>英語辞典 一覧</h2>
             <div id="en-content"></div>
+        </div>
+
+        <div id="search-results" class="content-area">
+            <h1 id="search-title">検索結果</h1>
+            <div id="results-list"></div>
         </div>
     </div>
 
     <script src="Jpdata.js"></script>
     <script src="Endata.js"></script>
     <script>
-        var allWords = [...jpData.map(item => item.word), ...enData.map(item => item.word)];
+        // データが正しく読み込まれているか確認し、統合リストを作成
+        let allWords = [];
+        window.onload = () => {
+            if (typeof jpData !== 'undefined' && typeof enData !== 'undefined') {
+                allWords = [...jpData.map(item => item.word), ...enData.map(item => item.word)];
+            } else {
+                console.error("データファイル (Jpdata.js / Endata.js) が見つからないか、変数名が異なります。");
+            }
+        };
 
+        // 入力時の処理（サジェスト表示とEnter確定）
         function handleSearch(e) {
-            const query = e.target.value.toLowerCase().trim();
+            const query = e.target.value.trim();
             const suggestionsDiv = document.getElementById('suggestions');
             
             if (query.length === 0) {
@@ -71,18 +86,21 @@
                 return;
             }
 
-            const matches = allWords.filter(word => word.toLowerCase().includes(query));
+            // 単語前方一致または部分一致で候補を絞り込む
+            const matches = allWords.filter(word => word.toLowerCase().includes(query.toLowerCase()));
             
             if (matches.length > 0) {
                 suggestionsDiv.innerHTML = '';
+                // 最大10件表示
                 matches.slice(0, 10).forEach(match => {
                     const div = document.createElement('div');
                     div.className = 'suggestion-item';
                     div.textContent = match;
+                    // 候補をクリックした時の処理
                     div.onclick = () => {
                         document.getElementById('searchInput').value = match;
                         suggestionsDiv.style.display = 'none';
-                        performSearch(match);
+                        performSearch(match); // そのまま検索実行
                     };
                     suggestionsDiv.appendChild(div);
                 });
@@ -91,40 +109,101 @@
                 suggestionsDiv.style.display = 'none';
             }
 
+            // Enterキーが押されたら検索を実行
             if (e.key === 'Enter') {
+                suggestionsDiv.style.display = 'none';
                 performSearch(query);
             }
         }
 
+        // 検索クリア
         function clearSearch() {
             document.getElementById('searchInput').value = '';
             document.getElementById('suggestions').style.display = 'none';
+            initPage(); // ホーム状態に戻す
         }
 
+        // 同一画面内での検索実行処理
         function performSearch(query) {
             if (!query) return;
-            window.location.href = `list.html?q=${encodeURIComponent(query)}`;
+
+            // タブの選択状態を解除
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            // すべてのエリアを一旦非表示に
+            document.querySelectorAll('.content-area').forEach(area => area.classList.remove('active'));
+
+            const resultsList = document.getElementById('results-list');
+            const searchResultsArea = document.getElementById('search-results');
+            const q = query.toLowerCase();
+            
+            // 日本語・英語データから、単語または意味にクエリが含まれるものを検索
+            let matches = [];
+            if (typeof jpData !== 'undefined') {
+                matches = matches.concat(jpData.filter(item => 
+                    item.word.toLowerCase().includes(q) || item.meaning.toLowerCase().includes(q)));
+            }
+            if (typeof enData !== 'undefined') {
+                matches = matches.concat(enData.filter(item => 
+                    item.word.toLowerCase().includes(q) || item.meaning.toLowerCase().includes(q)));
+            }
+
+            // 結果の描画
+            if (matches.length === 0) {
+                resultsList.innerHTML = `<p>「${query}」に一致する結果はありません。</p>`;
+            } else {
+                let html = '';
+                matches.forEach(item => {
+                    html += `<div class="result-item"><h3>${item.word}</h3><p>${item.meaning}</p></div>`;
+                });
+                resultsList.innerHTML = html;
+            }
+
+            // 検索結果エリアを表示
+            searchResultsArea.classList.add('active');
         }
 
+        // タブ切り替え処理
         function switchTab(tabIndex) {
+            // サジェストを閉じる
+            document.getElementById('suggestions').style.display = 'none';
+
             document.querySelectorAll('.tab').forEach((tab, i) => tab.classList.toggle('active', i === tabIndex));
             document.querySelectorAll('.content-area').forEach((area, i) => area.classList.toggle('active', i === tabIndex));
+            
             if (tabIndex === 1) loadJpData();
             if (tabIndex === 2) loadEnData();
         }
 
+        // 初期状態（ホーム）に戻す処理
+        function initPage() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('suggestions').style.display = 'none';
+            switchTab(0);
+        }
+
+        // 一覧データ読み込み（日本語）
         function loadJpData() {
             const container = document.getElementById('jp-content');
+            if (typeof jpData === 'undefined' || jpData.length === 0) {
+                container.innerHTML = '<p>データがありません。</p>';
+                return;
+            }
             container.innerHTML = '<ul class="word-list">' + 
                 jpData.map(item => `<li class="word-item" onclick="showDetail('${item.word}', '${item.meaning}')"><strong>${item.word}</strong>: ${item.meaning}</li>`).join('') + '</ul>';
         }
 
+        // 一覧データ読み込み（英語）
         function loadEnData() {
             const container = document.getElementById('en-content');
+            if (typeof enData === 'undefined' || enData.length === 0) {
+                container.innerHTML = '<p>データがありません。</p>';
+                return;
+            }
             container.innerHTML = '<ul class="word-list">' + 
                 enData.map(item => `<li class="word-item" onclick="showDetail('${item.word}', '${item.meaning}')"><strong>${item.word}</strong>: ${item.meaning}</li>`).join('') + '</ul>';
         }
 
+        // リストクリック時の詳細アラート
         function showDetail(word, meaning) {
             alert(`${word}：${meaning}`);
         }
