@@ -2,146 +2,130 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>簡単辞典WEB - ポータル</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>簡単辞典WEB</title>
     <style>
-        body { font-family: sans-serif; margin: 0; padding: 0; background: #f5f5f5; color: #333; }
-        .header-bar { background: #0056b3; color: white; display: flex; align-items: center; padding: 10px 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
-        .header-title { font-size: 20px; font-weight: bold; text-decoration: none; color: white; margin-right: 20px; white-space: nowrap; }
-        .header-search-container { flex-grow: 1; max-width: 500px; display: flex; position: relative; }
-        .header-input { width: 100%; padding: 10px 12px; font-size: 16px; border: none; border-radius: 4px 0 0 4px; outline: none; box-sizing: border-box; }
-        .header-btn { padding: 10px 20px; font-size: 15px; background: #003d82; color: white; border: none; border-radius: 0 4px 4px 0; cursor: pointer; font-weight: bold; }
-        .main-container { max-width: 600px; margin: 40px auto 0; background: white; padding: 40px 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; }
-        h1 { font-size: 24px; margin-bottom: 30px; color: #333; }
-        .notice { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 8px; padding: 25px; margin-bottom: 30px; text-align: left; font-size: 15px; line-height: 1.6; }
-        .notice h2 { margin: 0 0 12px 0; font-size: 18px; color: #0056b3; }
-        .suggest-box { position: absolute; top: 100%; left: 0; width: 100%; background: white; border: 1px solid #ccc; border-top: none; border-radius: 0 0 6px 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-height: 240px; overflow-y: auto; z-index: 1000; display: none; margin: 0; padding: 0; list-style: none; }
-        .suggest-box li { padding: 12px 15px; font-size: 16px; cursor: pointer; border-bottom: 1px solid #eee; color: #222; }
-        .suggest-box li:last-child { border-bottom: none; }
-        .suggest-box li:hover { background: #f0f5ff; color: #0056b3; }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f4; }
+        .navbar { background: #333; color: white; padding: 10px 20px; display: flex; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 24px; font-weight: bold; cursor: pointer; margin-right: 20px; }
+        .search-container { position: relative; flex: 1; max-width: 600px; }
+        .search-bar { width: 100%; padding: 10px; border: none; border-radius: 5px; font-size: 16px; }
+        .clear-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 18px; cursor: pointer; color: #666; }
+        .suggestions { position: absolute; top: 100%; left: 0; width: 100%; background: white; border: 1px solid #ddd; max-height: 300px; overflow-y: auto; z-index: 200; display: none; }
+        .suggestion-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #eee; }
+        .suggestion-item:hover { background: #f0f0f0; }
+        .main-content { padding: 20px; max-width: 1200px; margin: 0 auto; }
+        .tabs { display: flex; margin-bottom: 20px; }
+        .tab { padding: 10px 20px; cursor: pointer; background: #ddd; margin-right: 5px; border-radius: 5px 5px 0 0; }
+        .tab.active { background: white; border-bottom: 2px solid #333; }
+        .content-area { display: none; }
+        .content-area.active { display: block; }
+        .word-list { list-style: none; padding: 0; }
+        .word-item { margin: 10px 0; padding: 10px; background: white; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
-
-<div class="header-bar">
-    <a href="index.html" class="header-title">簡単辞典WEB</a>
-    <div class="header-search-container">
-        <input type="text" id="headerKeyword" class="header-input" placeholder="キーワードを入力..." autocomplete="off">
-        <button id="headerSearchBtn" class="header-btn">検索</button>
-        <ul id="headerSuggestBox" class="suggest-box"></ul>
+    <div class="navbar">
+        <div class="logo" onclick="window.location.reload()">簡単辞典WEB</div>
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-bar" placeholder="単語を検索..." onkeyup="handleSearch(event)">
+            <button class="clear-btn" onclick="clearSearch()">×</button>
+            <div id="suggestions" class="suggestions"></div>
+        </div>
     </div>
-</div>
 
-<div class="main-container">
-    <h1>簡単辞典WEB</h1>
-    <div class="notice">
-        <h2>📢 お知らせ</h2>
-        <p>・漢字・国語・英和の3種類の辞典を横断検索できます。<br>
-           ・検索ボタンで確実に検索できます。</p>
+    <div class="main-content">
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab(0)">ホーム</div>
+            <div class="tab" onclick="switchTab(1)">日本語辞典</div>
+            <div class="tab" onclick="switchTab(2)">英語辞典</div>
+        </div>
+
+        <!-- ホーム -->
+        <div id="home" class="content-area active">
+            <h1>ようこそ、簡単辞典WEBへ</h1>
+            <p>検索バーから単語を入力して探しましょう。</p>
+            <button onclick="window.location.href='list.html'">検索結果一覧を見る</button>
+        </div>
+
+        <!-- 日本語 -->
+        <div id="jp" class="content-area">
+            <h2>日本語辞典</h2>
+            <div id="jp-content"></div>
+        </div>
+
+        <!-- 英語 -->
+        <div id="en" class="content-area">
+            <h2>英語辞典</h2>
+            <div id="en-content"></div>
+        </div>
     </div>
-</div>
 
-<script src="data-kanji.js"></script>
-<script src="data-kokugo.js"></script>
-<script src="data-eiwa.js"></script>
+    <script src="Jpdata.js"></script>
+    <script src="Endata.js"></script>
+    <script>
+        // 全単語リスト（サジェスト用）
+        var allWords = [...jpData.map(item => item.word), ...enData.map(item => item.word)];
 
-<script>
-    function executeSearch(value) {
-        const val = value.trim();
-        if (val) {
-            window.location.href = `list.html?q=${encodeURIComponent(val)}`;
-        }
-    }
-
-    function getSimilarityScore(word, query) {
-        const lowerWord = word.toLowerCase();
-        const lowerQuery = query.toLowerCase();
-        if (lowerWord === lowerQuery) return 1000;
-        if (lowerWord.startsWith(lowerQuery)) return 500;
-        if (lowerWord.includes(lowerQuery)) return 100 - lowerWord.indexOf(lowerQuery);
-        return 0;
-    }
-
-    function getAllSearchTerms() {
-        const dKanji = (typeof dictKanji !== 'undefined') ? dictKanji : {};
-        const dKokugo = (typeof dictKokugo !== 'undefined') ? dictKokugo : {};
-        const dEiwa = (typeof dictEiwa !== 'undefined') ? dictEiwa : {};
-        const terms = new Set();
-
-        // 漢字（文字列）
-        Object.keys(dKanji).forEach(key => terms.add(key));
-
-        // 国語・英和（オブジェクト）
-        [dKokugo, dEiwa].forEach(dict => {
-            Object.keys(dict).forEach(key => {
-                terms.add(key);
-                const item = dict[key];
-                if (item && item.search && Array.isArray(item.search)) {
-                    item.search.forEach(term => {
-                        if (typeof term === 'string') terms.add(term);
-                    });
-                }
-            });
-        });
-
-        return Array.from(terms);
-    }
-
-    const masterKeywords = getAllSearchTerms();
-
-    function setupCustomSuggest(inputId, suggestBoxId) {
-        const inputEl = document.getElementById(inputId);
-        const boxEl = document.getElementById(suggestBoxId);
-
-        inputEl.addEventListener('input', () => {
-            const query = inputEl.value.trim().toLowerCase();
-            boxEl.innerHTML = '';
-
-            if (!query || query.length < 1) {
-                boxEl.style.display = 'none';
+        function handleSearch(e) {
+            const query = e.target.value.toLowerCase().trim();
+            const suggestionsDiv = document.getElementById('suggestions');
+            if (query.length === 0) {
+                suggestionsDiv.style.display = 'none';
                 return;
             }
 
-            const matched = masterKeywords
-                .map(word => ({ word, score: getSimilarityScore(word, query) }))
-                .filter(item => item.score > 0)
-                .sort((a, b) => b.score - a.score)
-                .slice(0, 10);
-
-            if (matched.length > 0) {
-                matched.forEach(item => {
-                    const li = document.createElement('li');
-                    li.textContent = item.word;
-                    li.addEventListener('click', () => {
-                        inputEl.value = item.word;
-                        boxEl.style.display = 'none';
-                        executeSearch(item.word);
-                    });
-                    boxEl.appendChild(li);
+            const matches = allWords.filter(word => word.toLowerCase().includes(query));
+            if (matches.length > 0) {
+                suggestionsDiv.innerHTML = '';
+                matches.forEach(match => {
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item';
+                    div.textContent = match;
+                    div.onclick = () => {
+                        document.getElementById('searchInput').value = match;
+                        suggestionsDiv.style.display = 'none';
+                        performSearch(match);
+                    };
+                    suggestionsDiv.appendChild(div);
                 });
-                boxEl.style.display = 'block';
+                suggestionsDiv.style.display = 'block';
             } else {
-                boxEl.style.display = 'none';
+                suggestionsDiv.style.display = 'none';
             }
-        });
+        }
 
-        document.addEventListener('click', (e) => {
-            if (e.target !== inputEl && !boxEl.contains(e.target)) {
-                boxEl.style.display = 'none';
-            }
-        });
-    }
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('suggestions').style.display = 'none';
+        }
 
-    // 検索ボタン・Enter
-    document.getElementById('headerSearchBtn').addEventListener('click', () => {
-        executeSearch(document.getElementById('headerKeyword').value);
-    });
-    document.getElementById('headerKeyword').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') executeSearch(document.getElementById('headerKeyword').value);
-    });
+        function performSearch(query) {
+            window.location.href = `list.html?q=${encodeURIComponent(query)}`;
+        }
 
-    setupCustomSuggest('headerKeyword', 'headerSuggestBox');
-</script>
+        function switchTab(tabIndex) {
+            document.querySelectorAll('.tab').forEach((tab, i) => tab.classList.toggle('active', i === tabIndex));
+            document.querySelectorAll('.content-area').forEach((area, i) => area.classList.toggle('active', i === tabIndex));
+            if (tabIndex === 1) loadJpData();
+            if (tabIndex === 2) loadEnData();
+        }
 
+        function loadJpData() {
+            const container = document.getElementById('jp-content');
+            container.innerHTML = '<ul class="word-list">' + 
+                jpData.map(item => `<li class="word-item" onclick="showDetail('${item.word}', '${item.meaning}')"><strong>${item.word}</strong>: ${item.meaning}</li>`).join('') + '</ul>';
+        }
+
+        function loadEnData() {
+            const container = document.getElementById('en-content');
+            container.innerHTML = '<ul class="word-list">' + 
+                enData.map(item => `<li class="word-item" onclick="showDetail('${item.word}', '${item.meaning}')"><strong>${item.word}</strong>: ${item.meaning}</li>`).join('') + '</ul>';
+        }
+
+        function showDetail(word, meaning) {
+            alert(`${word}: ${meaning}`);
+        }
+    </script>
 </body>
 </html>
