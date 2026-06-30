@@ -108,16 +108,19 @@
         </div>
     </div>
 
-    <script src="Jpdata.js"></script>
+    <script src="jpdata.js"></script>
     <script src="endata.js"></script>
     
     <script>
         let combinedData = [];
 
-        // ページ読み込み時にデータを統合する（バグ抑止のための安全な独立イフ文構造）
+        // ページ読み込み時にデータを統合する（大文字・小文字どちらの変数名でも安全に結合する構造）
         window.onload = () => {
             if (window.jpData) {
                 combinedData = combinedData.concat(window.jpData);
+            }
+            if (window.JpData) {
+                combinedData = combinedData.concat(window.JpData);
             }
             if (window.enData) {
                 combinedData = combinedData.concat(window.enData);
