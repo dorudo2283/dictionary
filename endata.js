@@ -1,5 +1,5 @@
 // 英語辞典データ（日本語解説・和訳付き例文スタイル）
-var enData = [
+window.enData = [
     { 
         word: "Thank you", 
         lang: "en",
