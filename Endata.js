@@ -1,36 +1,33 @@
-// 英語辞典データ
+// 英語辞典データ（日本語で分かりやすく解説するスタイル）
 var enData = [
     { 
-        word: "hello", 
-        pos: "Greeting", 
-        type: "Interjection", 
-        translation: "こんにちは", 
-        meaning: "An expression of greeting used when meeting someone, initiating a telephone conversation, or catching someone's attention.",
+        word: "thank you", 
+        pos: "挨拶", 
+        type: "他動詞", 
+        romaji: "サンキュー", 
+        meaning: "「Thank you」は英語で、相手に感謝を伝える言葉である。短いながらに汎用性が高いため、大抵の人には通じる。「thank(s)」は感謝で、「you」はあなたという意味を持つ。つまり、感謝をあなたにという意味だ。<br>読み：サンキュー<br>和訳：ありがとう",
         examples: [
-            "He said hello to his neighbor this morning.（彼は今朝、近所の人にこんにちはと挨拶した。）",
-            "Hello! Is anyone there?（こんにちは！誰かそこにいますか？）"
+            "Thank you so much for helping me out today.（今日は手伝ってくれてありがとうございます！）"
         ]
     },
     { 
-        word: "thank you", 
-        pos: "Phrase", 
-        type: "Expression", 
-        translation: "ありがとう", 
-        meaning: "A polite expression used to acknowledge a gift, service, or compliment, or to accept or refuse an offer.",
+        word: "hello", 
+        pos: "挨拶", 
+        type: "間投詞", 
+        romaji: "ハロー", 
+        meaning: "「Hello」は英語における最も基本的かつ一般的な挨拶の言葉。時間帯を問わず、対面時だけでなく電話の第一声や、相手の注意を引きたい時（「もしもし」「ちょっと」）などにも幅広く使われる。<br>読み：ハロー<br>和訳：こんにちは"
         examples: [
-            "Thank you very much for your help.（手伝ってくれて本当にありがとう。）",
-            "A simple 'thank you' is enough.（シンプルな「ありがとう」だけで十分です。）"
+            "He said hello to his neighbor this morning.（彼は今朝、近所の人にこんにちはと挨拶した。）"
         ]
     },
     { 
         word: "cat", 
-        pos: "Noun", 
-        type: "Animal", 
-        translation: "猫", 
-        meaning: "A small domesticated carnivorous mammal with soft fur, a short snout, and retractile claws. It is widely kept as a pet.",
+        pos: "名詞", 
+        type: "動物", 
+        romaji: "キャット", 
+        meaning: "「Cat」はネコ科の動物「猫」を指す言葉。世界中でペットとして広く愛されており、気まぐれな行動や愛らしい見た目が特徴。ことわざや日常の慣用表現にもよく登場する。<br>読み：キャット<br>和訳：猫",
         examples: [
-            "The cat chased a mouse under the sofa.（猫がソファの下でネズミを追いかけた。）",
-            "I heard a cat meowing outside the window.（窓の外で猫が鳴いているのが聞こえた。）"
+            "The cat chased a mouse under the sofa.（猫がソファの下でネズミを追いかけた。）"
         ]
     }
 ];
