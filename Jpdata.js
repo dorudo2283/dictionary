@@ -1,18 +1,37 @@
 // 日本語辞典データ
 var jpData = [
-    { word: "こんにちは", meaning: "Hello / Good day（日常的な挨拶）" },
-    { word: "ありがとう", meaning: "Thank you（感謝の意を表す）" },
-    { word: "さようなら", meaning: "Goodbye（別れの挨拶）" },
-    { word: "猫", meaning: "Cat（愛らしい動物）" },
-    { word: "犬", meaning: "Dog（忠実な伴侶）" },
-    { word: "山", meaning: "Mountain（高い自然の地形）" },
-    { word: "川", meaning: "River（自然の水路）" },
-    { word: "食べる", meaning: "To eat（食事を摂る）" },
-    { word: "飲む", meaning: "To drink（液体を摂取する）" },
-    { word: "行く", meaning: "To go（移動する）" },
-    { word: "来る", meaning: "To come（こちらへ移動する）" },
-    { word: "見る", meaning: "To see / To look（視覚で捉える）" },
-    { word: "聞く", meaning: "To listen / To hear（音を捉える）" },
-    { word: "本", meaning: "Book（読むためのもの）" },
-    { word: "学校", meaning: "School（学ぶ場所）" }
+    { 
+        word: "こんにちは", 
+        pos: "挨拶", 
+        type: "間投詞", 
+        romaji: "kon ni chi wa", 
+        meaning: "「こんにちは」とは、日中で使われる日本語での基本的な挨拶である。親しさに関係なく広く使われる表現の為、日本語で広く定着している。表記として「こんにちわ」は正しくないといえる。",
+        examples: [
+            "「こんにちは！」と元気な小学生が挨拶した。",
+            "今日も「こんにちは」",
+            "店員に「こんにちは」と軽く挨拶をした。"
+        ]
+    },
+    { 
+        word: "ありがとう", 
+        pos: "挨拶", 
+        type: "感動詞", 
+        romaji: "a ri ga to u", 
+        meaning: "他人の好意や親切に対して、感謝の気持ちを表す言葉。日本語において最も普遍的に用いられる感謝の表現である。",
+        examples: [
+            "親切に道を教えてくれてありがとう。",
+            "お土産をもらって「ありがとう」と伝えた。"
+        ]
+    },
+    { 
+        word: "猫", 
+        pos: "名詞", 
+        type: "動物", 
+        romaji: "ne ko", 
+        meaning: "ネコ目ネコ科に属する小型の哺乳類。古くから世界中でペットとして広く愛玩されており、気まぐれな性格としなやかな動きが特徴である。",
+        examples: [
+            "日向で猫が気持ちよさそうに眠っている。",
+            "私の家では白い猫を飼っています。"
+        ]
+    }
 ];
