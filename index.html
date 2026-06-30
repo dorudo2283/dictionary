@@ -104,7 +104,7 @@
 
     <div class="main-content">
         <div id="content-area">
-            <p style="text-align: center; color: #666;">検索バーに単語を入力してください。あ</p>
+            <p style="text-align: center; color: #666;">検索バーに単語を入力してください。</p>
         </div>
     </div>
 
@@ -127,26 +127,24 @@
                 });
         }
 
-        // 高精度なフィルタリング関数（解説文での誤爆を防ぐ）
+        // 検索ロジックの厳格化
         function filterData(query) {
             if (!query) return [];
             const normalizedQuery = normalizeString(query);
 
             return combinedData.filter(item => {
                 const word = normalizeString(item.word);
-                const romaji = item.romaji ? normalizeString(item.romaji) : '';
+                // ローマ字のスペース（"kon ni chi wa"）を除去して判定しやすくする
+                const romaji = item.romaji ? normalizeString(item.romaji).replace(/\s+/g, '') : '';
                 const meaning = normalizeString(item.meaning);
 
-                // 1. 単語そのもの、または読み（ローマ字/カタカナ）が入力文字から始まっているか（最優先）
-                if (word.startsWith(normalizedQuery) || romaji.startsWith(normalizedQuery)) {
-                    return true;
+                // 【条件1】入力が1文字だけの場合：単語の先頭、またはローマ字の先頭が一致（前方一致）のみ許可
+                if (normalizedQuery.length === 1) {
+                    return word.startsWith(normalizedQuery) || romaji.startsWith(normalizedQuery);
                 }
-                // 2. 単語そのもの、または読みに入力文字が含まれているか
-                if (word.includes(normalizedQuery) || romaji.includes(normalizedQuery)) {
-                    return true;
-                }
-                // 3. 入力文字が2文字以上の時だけ、日本語の意味（解説文）の部分一致を許可（1文字検索時の誤爆防止）
-                if (normalizedQuery.length >= 2 && meaning.includes(normalizedQuery)) {
+
+                // 【条件2】入力が2文字以上の移行：部分一致や解説文（meaning）の検索を許可
+                if (word.includes(normalizedQuery) || romaji.includes(normalizedQuery) || meaning.includes(normalizedQuery)) {
                     return true;
                 }
 
@@ -170,7 +168,6 @@
                 return;
             }
 
-            // 精度を向上させたフィルターを通す
             const matches = filterData(query);
             
             if (matches.length > 0) {
@@ -178,8 +175,6 @@
                 matches.slice(0, 10).forEach(match => {
                     const div = document.createElement('div');
                     div.className = 'suggestion-item';
-                    
-                    // 「(英語)」の無駄なテキストを削除し、純粋な単語名のみ表示
                     div.textContent = match.word;
                     
                     div.onclick = (event) => {
@@ -202,8 +197,6 @@
         function performSearch(query) {
             if (!query) return;
             const contentArea = document.getElementById('content-area');
-
-            // 精度を向上させたフィルターを通す
             const results = filterData(query);
 
             let html = '';
