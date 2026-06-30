@@ -104,7 +104,7 @@
 
     <div class="main-content">
         <div id="content-area">
-            <p style="text-align: center; color: #666;">検索</p>
+            <p style="text-align: center; color: #666;">検索バーに単語を入力してください。</p>
         </div>
     </div>
 
@@ -151,10 +151,12 @@
             }
 
             const normalizedQuery = normalizeString(query);
-            // 単語（word）または対訳（translation）で前方・部分一致するもの
+            
+            // 単語（word）、意味（meaning）、読み（romaji）のいずれかにヒットする候補を抽出
             const matches = combinedData.filter(item => 
                 normalizeString(item.word).includes(normalizedQuery) ||
-                (item.translation && normalizeString(item.translation).includes(normalizedQuery))
+                normalizeString(item.meaning).includes(normalizedQuery) ||
+                (item.romaji && normalizeString(item.romaji).includes(normalizedQuery))
             );
             
             if (matches.length > 0) {
@@ -164,9 +166,9 @@
                     const div = document.createElement('div');
                     div.className = 'suggestion-item';
                     
-                    // 英語データと日本語データでサジェスト表示の体裁を調整
-                    if (match.translation) {
-                        div.textContent = `${match.word} (${match.translation})`;
+                    // 英語データの場合は、サジェスト一覧で分かりやすいように (英語) と付与する
+                    if (match.lang === 'en') {
+                        div.textContent = `${match.word} (英語)`;
                     } else {
                         div.textContent = match.word;
                     }
@@ -191,11 +193,11 @@
             const contentArea = document.getElementById('content-area');
             const normalizedQuery = normalizeString(query.trim());
 
-            // word, meaning, translation のいずれかにヒットするものを抽出
+            // word, meaning, romaji のいずれかにヒットするものを抽出
             const results = combinedData.filter(item => 
                 normalizeString(item.word).includes(normalizedQuery) || 
                 normalizeString(item.meaning).includes(normalizedQuery) ||
-                (item.translation && normalizeString(item.translation).includes(normalizedQuery))
+                (item.romaji && normalizeString(item.romaji).includes(normalizedQuery))
             );
 
             let html = '';
