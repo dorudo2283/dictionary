@@ -5,31 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>簡単辞典WEB</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f4; }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #ffffff; color: #333; }
         .navbar { background: #333; color: white; padding: 10px 20px; display: flex; align-items: center; position: sticky; top: 0; z-index: 100; }
         .logo { font-size: 24px; font-weight: bold; cursor: pointer; margin-right: 20px; }
         .search-container { position: relative; flex: 1; max-width: 600px; }
-        .search-bar { width: 100%; padding: 10px; border: none; border-radius: 5px; font-size: 16px; box-sizing: border-box; }
+        .search-bar { width: 100%; padding: 10px; border: none; border-radius: 5px; font-size: 16px; box-sizing: border-box; color: #333; }
         .clear-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 18px; cursor: pointer; color: #666; }
         
-        /* 候補（サジェスト）リストの見た目 */
+        /* 候補（サジェスト）リスト：文字色を黒に、シンプルに文字だけに修正 */
         .suggestions { position: absolute; top: 100%; left: 0; width: 100%; background: white; border: 1px solid #ccc; border-top: none; border-radius: 0 0 5px 5px; max-height: 200px; overflow-y: auto; box-sizing: border-box; display: none; z-index: 1000; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .suggestion-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #eee; }
+        .suggestion-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #eee; color: #333; font-size: 16px; text-align: left; }
         .suggestion-item:last-child { border-bottom: none; }
         .suggestion-item:hover { background: #f0f0f0; }
 
+        /* メインコンテンツエリア */
         .container { max-width: 800px; margin: 20px auto; padding: 0 20px; }
-        .dictionary-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .card-header { border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 15px; }
-        .main-word { margin: 0; font-size: 28px; color: #333; }
-        .pos-tag { font-size: 16px; color: #666; font-weight: normal; margin-left: 10px; }
-        .word-meta { font-size: 14px; color: #888; margin-top: 5px; }
-        .result-meaning { font-size: 16px; line-height: 1.6; color: #444; }
-        .examples-section { margin-top: 15px; background: #f9f9f9; padding: 15px; border-left: 4px solid #007BFF; border-radius: 0 4px 4px 0; }
-        .examples-title { margin: 0 0 10px 0; font-size: 16px; color: #333; }
-        .example-list { margin: 0; padding-left: 20px; }
-        .example-list li { margin-bottom: 8px; color: #555; line-height: 1.4; }
-        .example-list li:last-child { margin-bottom: 0; }
+        
+        /* 「〇〇の検索結果...」のタイトルスタイル */
+        .search-title { text-align: center; color: #777; font-style: italic; font-size: 20px; margin-bottom: 25px; }
+        
+        /* 辞書カード：画像に合わせた薄グレーの背景とレイアウト */
+        .dictionary-card { background: #f5f5f5; padding: 30px; border-radius: 4px; margin-bottom: 20px; box-shadow: none; text-align: center; }
+        
+        /* ヘッダー：左側（日本語/英語）と右側（読み・ローマ字）の2カラム構成 */
+        .card-header { display: flex; justify-content: space-between; align-items: flex-baseline; margin-bottom: 25px; padding-bottom: 0; border-bottom: none; }
+        
+        /* 左側：単語と品詞 */
+        .header-left { display: flex; align-items: baseline; text-align: left; }
+        .main-word { margin: 0; font-size: 36px; font-weight: bold; color: #000; }
+        .pos-tag { font-size: 32px; font-weight: bold; color: #000; margin-left: 10px; }
+        
+        /* 右側：【分類】と読み・ローマ字 */
+        .header-right { text-align: right; font-size: 14px; color: #333; }
+        
+        /* 意味・説明文：中央揃えで読みやすい余白 */
+        .result-meaning { font-size: 18px; line-height: 1.6; color: #111; margin: 0 auto 25px auto; max-width: 650px; white-space: pre-line; text-align: center; }
+        
+        /* 例文セクション */
+        .examples-section { display: inline-block; text-align: left; max-width: 650px; margin: 0 auto; font-size: 18px; line-height: 1.6; color: #111; }
+        .example-list { list-style: none; padding: 0; margin: 0; }
+        .example-list li { position: relative; padding-left: 15px; margin-bottom: 5px; }
+        .example-list li::before { content: "・"; position: absolute; left: 0; }
     </style>
 </head>
 <body>
@@ -47,32 +63,28 @@
         <p style="text-align: center; color: #666;">検索バーに単語を入力してください。</p>
     </div>
 
+    <!-- データファイルの読み込み -->
     <script src="jpdata.js"></script>
     <script src="endata.js"></script>
 
     <script>
-        // 両方のデータを統合
         const combinedData = [...(window.jpData || []), ...(window.enData || [])];
 
-        // 表記ゆれ（大文字小文字、全角半角、スペース、ひらがなカタカナ）を強力に吸収する関数
+        // 表記ゆれ吸収関数
         function cleanText(str) {
             if (!str) return '';
-            // 1. 前後の空白を消し、小文字化
             let t = str.trim().toLowerCase();
-            // 2. 全角英数字を半角に変換
             t = t.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
                 return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
             });
-            // 3. カタカナをひらがなに変換
             t = t.replace(/[\u30a1-\u30f6]/g, function(match) {
                 const chr = match.charCodeAt(0) - 0x60;
                 return String.fromCharCode(chr);
             });
-            // 4. 文字列内のすべてのスペース（全角・半角）を消去
             return t.replace(/\s+/g, '');
         }
 
-        // 入力時のサジェスト（候補）表示ロジック
+        // サジェスト抽出
         function filterSuggestions(query) {
             if (!query) return [];
             const target = cleanText(query);
@@ -81,25 +93,21 @@
                 const word = cleanText(item.word);
                 const romaji = item.romaji ? cleanText(item.romaji) : '';
                 const meaning = item.meaning ? cleanText(item.meaning) : '';
-
-                // 見出し語、ローマ字、あるいは意味のいずれかに検索文字が含まれているか（部分一致）
                 return word.includes(target) || romaji.includes(target) || meaning.includes(target);
             });
         }
 
-        // エンターキー確定時の検索ロジック（部分一致も含めて柔軟にヒットさせる）
+        // 本格検索抽出
         function filterExactSearch(query) {
             if (!query) return [];
             const target = cleanText(query);
 
-            // まずは「見出し語」または「ローマ字」が完全に一致するものを探す
             let results = combinedData.filter(item => {
                 const word = cleanText(item.word);
                 const romaji = item.romaji ? cleanText(item.romaji) : '';
                 return word === target || romaji === target;
             });
 
-            // 完全一致がなければ、部分一致（前行のfilterSuggestionsと同様）で広く検索
             if (results.length === 0) {
                 results = combinedData.filter(item => {
                     const word = cleanText(item.word);
@@ -107,10 +115,10 @@
                     return word.includes(target) || romaji.includes(target);
                 });
             }
-
             return results;
         }
 
+        // 入力時の処理（サジェスト生成）
         function handleInput(value) {
             const suggestionsDiv = document.getElementById('suggestions');
             if (!value.trim()) {
@@ -126,9 +134,9 @@
             }
 
             let html = '';
-            // 最大10件まで候補を表示
+            // シンプルに文字だけ（黒色）を出すように修正
             matched.slice(0, 10).forEach(item => {
-                html += `<div class="suggestion-item" onclick="selectSuggestion('${item.word}')">${item.word} <span style="color:#999; font-size:12px;">(${item.pos || '単語'})</span></div>`;
+                html += `<div class="suggestion-item" onclick="selectSuggestion('${item.word}')">${item.word}</div>`;
             });
 
             suggestionsDiv.innerHTML = html;
@@ -148,6 +156,7 @@
             executeSearch(word);
         }
 
+        // 検索実行と画面描画（画像のデザインを再現）
         function executeSearch(query) {
             document.getElementById('suggestions').style.display = 'none';
             const contentArea = document.getElementById('content-area');
@@ -164,7 +173,9 @@
                 return;
             }
 
-            let html = '';
+            // 「〇〇」の検索結果... タイトルを最初に追加
+            let html = `<div class="search-title">「${query}」の検索結果 ...</div>`;
+            
             results.forEach(item => {
                 let examplesHtml = '';
                 if (item.examples && item.examples.length > 0) {
@@ -174,17 +185,31 @@
                     });
                     examplesHtml = `
                         <div class="examples-section">
-                            <h3 class="examples-title">例文</h3>
                             <ul class="example-list">${liHtml}</ul>
                         </div>
                     `;
                 }
 
+                // 右側の「分類 - 読み/ローマ字」のテキストを組み立て
+                let metaRight = '';
+                if (item.pos) {
+                    metaRight += `【${item.pos}】`;
+                }
+                if (item.romaji) {
+                    metaRight += metaRight ? ` - ${item.romaji}` : item.romaji;
+                }
+
+                // 左右分割構造のカードHTML
                 html += `
                     <div class="dictionary-card">
                         <div class="card-header">
-                            <h1 class="main-word">${item.word} <span class="pos-tag">[${item.pos || '名詞'}]</span></h1>
-                            <div class="word-meta">【${item.type || '基本語'}】${item.romaji ? ` - ${item.romaji}` : ''}</div>
+                            <div class="header-left">
+                                <span class="main-word">${item.word}</span>
+                                <span class="pos-tag">[${item.type || '補足'}]</span>
+                            </div>
+                            <div class="header-right">
+                                ${metaRight}
+                            </div>
                         </div>
                         <p class="result-meaning">${item.meaning}</p>
                         ${examplesHtml}
@@ -195,6 +220,7 @@
             contentArea.innerHTML = html;
         }
 
+        // 外側クリックでサジェストを閉じる
         document.addEventListener('click', (e) => {
             const suggestionsDiv = document.getElementById('suggestions');
             const searchInput = document.getElementById('searchInput');
