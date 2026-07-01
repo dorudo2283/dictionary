@@ -8,31 +8,23 @@
         body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #ffffff; }
         
         /* --- 動的なレイアウト制御 --- */
-        /* 初期状態（ホーム）：上部バーは非表示 */
-        body.is-home .navbar { display: none; }
-        /* 検索後：中央のホームコンテンツを非表示 */
-        body.is-result .home-container { display: none; }
+        /* 検索結果モードになったら、中央の巨大ロゴ（home-logo-container）を非表示にする */
+        body.is-result .home-logo-container { display: none; }
         body.is-result { background: #f4f4f4; } /* 検索後は背景を少しグレーに */
 
-        /* --- 上部ナビゲーションバー（検索後用） --- */
+        /* --- 【常に表示・検索はすべてここ】上部ナビゲーションバー --- */
         .navbar { background: #333; color: white; padding: 10px 20px; display: flex; align-items: center; position: sticky; top: 0; z-index: 100; }
         .logo { font-size: 24px; font-weight: bold; cursor: pointer; margin-right: 20px; white-space: nowrap; }
-        .navbar .search-container { position: relative; flex: 1; max-width: 600px; }
-        .navbar .search-bar { width: 100%; padding: 10px; border: none; border-radius: 5px; font-size: 16px; box-sizing: border-box; }
-        .navbar .clear-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 18px; cursor: pointer; color: #666; }
+        .search-container { position: relative; flex: 1; max-width: 600px; }
+        .search-bar { width: 100%; padding: 10px; border: none; border-radius: 5px; font-size: 16px; box-sizing: border-box; }
+        .clear-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 18px; cursor: pointer; color: #666; }
 
-        /* --- 中央のホーム画面（初期状態用） --- */
-        .home-container { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh; padding: 20px; box-sizing: border-box; }
-        .home-logo { font-size: 60px; font-weight: bold; color: #333; margin-bottom: 30px; cursor: pointer; text-shadow: 1px 1px 3px rgba(0,0,0,0.1); }
-        .home-container .search-container { position: relative; width: 100%; max-width: 600px; }
-        .home-container .search-bar { width: 100%; padding: 15px 20px; border: 1px solid #dfe1e5; border-radius: 24px; font-size: 16px; box-sizing: border-box; box-shadow: none; transition: box-shadow 0.2s; }
-        .home-container .search-bar:hover, .home-container .search-bar:focus { border-color: rgba(223,225,229,0); box-shadow: 0 1px 6px rgba(32,33,36,0.28); outline: none; }
-        .home-container .clear-btn { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 20px; cursor: pointer; color: #70757a; }
+        /* --- 【初期状態用】中央の巨大ロゴエリア（検索機能はなし） --- */
+        .home-logo-container { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 75vh; padding: 20px; box-sizing: border-box; }
+        .giant-logo { font-size: 64px; font-weight: bold; color: #333; cursor: pointer; text-shadow: 1px 1px 3px rgba(0,0,0,0.1); user-select: none; }
 
-        /* --- 共通：サジェスト（候補）リストの見た目 --- */
+        /* --- 候補（サジェスト）リストの見た目 --- */
         .suggestions { position: absolute; top: 100%; left: 0; width: 100%; background: white; border: 1px solid #ddd; max-height: 300px; overflow-y: auto; z-index: 200; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.2); margin-top: 5px; }
-        /* ホーム画面用のサジェストは角を少し丸く */
-        .home-container .suggestions { border-radius: 8px; }
         .suggestion-item { padding: 12px 20px; cursor: pointer; border-bottom: 1px solid #eee; color: #333; text-align: left; }
         .suggestion-item:hover { background: #f0f0f0; }
         
@@ -115,19 +107,14 @@
 <body class="is-home"> <div class="navbar">
         <div class="logo" onclick="resetPage()">簡単辞典WEB</div>
         <div class="search-container">
-            <input type="text" id="navbarInput" class="search-bar" placeholder="単語を入力..." onkeyup="handleSearch(event, 'navbar')">
+            <input type="text" id="searchInput" class="search-bar" placeholder="単語を入力..." onkeyup="handleSearch(event)">
             <button class="clear-btn" onclick="clearSearch()">×</button>
-            <div id="navbarSuggestions" class="suggestions"></div>
+            <div id="suggestions" class="suggestions"></div>
         </div>
     </div>
 
-    <div class="home-container">
-        <div class="home-logo" onclick="resetPage()">簡単辞典WEB</div>
-        <div class="search-container">
-            <input type="text" id="homeInput" class="search-bar" placeholder="単語を入力..." onkeyup="handleSearch(event, 'home')">
-            <button class="clear-btn" onclick="clearSearch()">×</button>
-            <div id="homeSuggestions" class="suggestions"></div>
-        </div>
+    <div class="home-logo-container">
+        <div class="giant-logo" onclick="resetPage()">簡単辞典WEB</div>
     </div>
 
     <div class="main-content">
@@ -153,7 +140,7 @@
             });
         }
 
-        // 【死守】サジェスト用の単語名のみ＆重複排除ロジック
+        // サジェスト用の単語名のみ＆重複排除ロジック（絶対死守）
         function filterSuggestions(query) {
             if (!query) return [];
             const target = cleanText(query);
@@ -177,7 +164,7 @@
             return Array.from(uniqueMap.values());
         }
 
-        // 【死守】本番検索用の厳格な単語名のみ完全一致＆重複カットロジック
+        // 本番検索用の厳格な単語名のみ完全一致＆重複カットロジック（絶対死守）
         function filterExactSearch(query) {
             if (!query) return [];
             const target = cleanText(query);
@@ -197,33 +184,27 @@
             return Array.from(uniqueMap.values());
         }
 
-        // 入力中のキーボード操作（二つの入力欄の同期処理を追加）
-        function handleSearch(e, currentType) {
+        // 入力中のキーボード操作
+        function handleSearch(e) {
             const query = e.target.value.trim();
-            
-            // ホームと上のバーの文字入力をリアルタイムで同期させる
-            const homeInput = document.getElementById('homeInput');
-            const navbarInput = document.getElementById('navbarInput');
-            if (currentType === 'home') navbarInput.value = query;
-            if (currentType === 'navbar') homeInput.value = query;
 
             if (e.key === 'Enter') {
-                closeAllSuggestions();
+                closeSuggestions();
                 performExactSearch(query);
                 return;
             }
 
-            const currentSuggestionsObj = document.getElementById(currentType + 'Suggestions');
+            const suggestionsDiv = document.getElementById('suggestions');
             
             if (query.length === 0) {
-                currentSuggestionsObj.style.display = 'none';
+                suggestionsDiv.style.display = 'none';
                 return;
             }
 
             const matches = filterSuggestions(query);
             
             if (matches.length > 0) {
-                currentSuggestionsObj.innerHTML = '';
+                suggestionsDiv.innerHTML = '';
                 matches.slice(0, 10).forEach(match => {
                     const div = document.createElement('div');
                     div.className = 'suggestion-item';
@@ -231,18 +212,18 @@
                     
                     div.onclick = (event) => {
                         event.stopPropagation();
-                        homeInput.value = match.word;
-                        navbarInput.value = match.word;
-                        closeAllSuggestions();
+                        const searchInput = document.getElementById('searchInput');
+                        searchInput.value = match.word;
+                        closeSuggestions();
                         
                         performExactSearch(match.word);
-                        e.target.blur();
+                        searchInput.blur();
                     };
-                    currentSuggestionsObj.appendChild(div);
+                    suggestionsDiv.appendChild(div);
                 });
-                currentSuggestionsObj.style.display = 'block';
+                suggestionsDiv.style.display = 'block';
             } else {
-                currentSuggestionsObj.style.display = 'none';
+                suggestionsDiv.style.display = 'none';
             }
         }
 
@@ -250,7 +231,7 @@
         function performExactSearch(query) {
             if (!query) return;
 
-            // 検索結果モードへ切り替え（中央を隠し、上のバーと結果エリアを出す）
+            // 検索結果モードへ切り替え（中央の巨大ロゴを隠し、結果エリアを出す）
             document.body.className = "is-result";
 
             const contentArea = document.getElementById('content-area');
@@ -289,14 +270,13 @@
             contentArea.innerHTML = html;
         }
 
-        function closeAllSuggestions() {
-            document.getElementById('homeSuggestions').style.display = 'none';
-            document.getElementById('navbarSuggestions').style.display = 'none';
+        function closeSuggestions() {
+            document.getElementById('suggestions').style.display = 'none';
         }
 
         document.addEventListener('click', (e) => {
             if (!e.target.classList.contains('search-bar')) {
-                closeAllSuggestions();
+                closeSuggestions();
             }
         });
 
@@ -306,10 +286,9 @@
 
         // 初期状態（ホーム）に完全リセットする機能
         function resetPage() {
-            document.getElementById('homeInput').value = '';
-            document.getElementById('navbarInput').value = '';
-            closeAllSuggestions();
-            document.body.className = "is-home"; // ホームモードに戻す
+            document.getElementById('searchInput').value = '';
+            closeSuggestions();
+            document.body.className = "is-home"; // ホームモード（巨大ロゴ表示）に戻す
             document.getElementById('content-area').innerHTML = '';
         }
     </script>
