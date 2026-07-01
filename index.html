@@ -15,7 +15,7 @@
         .search-bar { width: 100%; padding: 12px 50px 12px 15px; border: none; font-size: 15px; box-sizing: border-box; color: #333; }
         .search-bar::placeholder { color: #999; }
 
-        /* --- 【改善】×ボタンのクリックエリアを拡張 --- */
+        /* ×ボタンのクリックエリア拡張（フィッツの法則を維持） */
         .clear-btn { 
             position: absolute; 
             right: 85px; 
@@ -23,16 +23,16 @@
             transform: translateY(-50%); 
             background: none; 
             border: none; 
-            font-size: 20px;       /* 視認性を少しだけ向上 */
+            font-size: 20px; 
             cursor: pointer; 
             color: #aaa; 
-            padding: 10px 15px;    /* 上下左右に透明なクリック領域を拡大（フィッツの法則に対応） */
+            padding: 10px 15px; 
             line-height: 1;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        .clear-btn:hover { color: #666; } /* ホバー時に少し暗くして反応を分かりやすく */
+        .clear-btn:hover { color: #666; }
 
         .search-btn { background-color: #3b82f6; color: white; border: none; padding: 0 25px; font-size: 15px; cursor: pointer; white-space: nowrap; }
         
@@ -321,10 +321,15 @@
             }
         });
 
+        // 【改善】×マークを押したときは枠内だけ消してフォーカスを戻す（検索結果画面は維持）
         function clearSearch() {
-            resetPage();
+            const searchInput = document.getElementById('searchInput');
+            searchInput.value = ''; // 文字列だけを消去
+            document.getElementById('suggestions').style.display = 'none'; // サジェストを閉じる
+            searchInput.focus(); // 即座に再入力できるようフォーカスを当てる（タスク継続性の維持）
         }
 
+        // 左のタイトルを押したときだけ、完全な初期ホームに戻る
         function resetPage() {
             document.getElementById('searchInput').value = '';
             document.getElementById('suggestions').style.display = 'none';
