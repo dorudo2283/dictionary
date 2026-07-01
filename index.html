@@ -6,33 +6,47 @@
     <title>簡単辞典WEB</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #ffffff; }
+        .navbar { background: #555555; color: white; padding: 15px 30px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+        .brand-area { display: flex; flex-direction: column; }
+        .logo { font-size: 26px; font-weight: normal; cursor: pointer; color: #fff; line-height: 1.2; }
+        .sub-logo { font-size: 16px; color: #ddd; margin-top: 4px; }
         
-        /* --- 動的なレイアウト制御 --- */
-        /* 検索結果モードになったら、中央の巨大ロゴ（home-logo-container）を非表示にする */
-        body.is-result .home-logo-container { display: none; }
-        body.is-result { background: #f4f4f4; } /* 検索後は背景を少しグレーに */
-
-        /* --- 【常に表示・検索はすべてここ】上部ナビゲーションバー --- */
-        .navbar { background: #333; color: white; padding: 10px 20px; display: flex; align-items: center; position: sticky; top: 0; z-index: 100; }
-        .logo { font-size: 24px; font-weight: bold; cursor: pointer; margin-right: 20px; white-space: nowrap; }
-        .search-container { position: relative; flex: 1; max-width: 600px; }
-        .search-bar { width: 100%; padding: 10px; border: none; border-radius: 5px; font-size: 16px; box-sizing: border-box; }
-        .clear-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 18px; cursor: pointer; color: #666; }
-
-        /* --- 【初期状態用】中央の巨大ロゴエリア（検索機能はなし） --- */
-        .home-logo-container { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 75vh; padding: 20px; box-sizing: border-box; }
-        .giant-logo { font-size: 64px; font-weight: bold; color: #333; cursor: pointer; text-shadow: 1px 1px 3px rgba(0,0,0,0.1); user-select: none; }
-
-        /* --- 候補（サジェスト）リストの見た目 --- */
-        .suggestions { position: absolute; top: 100%; left: 0; width: 100%; background: white; border: 1px solid #ddd; max-height: 300px; overflow-y: auto; z-index: 200; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.2); margin-top: 5px; }
-        .suggestion-item { padding: 12px 20px; cursor: pointer; border-bottom: 1px solid #eee; color: #333; text-align: left; }
+        .search-container { position: relative; display: flex; width: 100%; max-width: 500px; }
+        .search-bar { width: 100%; padding: 12px 40px 12px 15px; border: none; font-size: 15px; box-sizing: border-box; color: #333; }
+        .search-bar::placeholder { color: #999; }
+        .clear-btn { position: absolute; right: 85px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 16px; cursor: pointer; color: #aaa; padding: 0; }
+        .search-btn { background-color: #3b82f6; color: white; border: none; padding: 0 25px; font-size: 15px; cursor: pointer; white-space: nowrap; }
+        
+        /* 候補（サジェスト）リストの見た目 */
+        .suggestions { position: absolute; top: 100%; left: 0; width: calc(100% - 74px); background: white; border: 1px solid #ddd; max-height: 300px; overflow-y: auto; z-index: 200; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .suggestion-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #eee; color: #333; text-align: left; }
         .suggestion-item:hover { background: #f0f0f0; }
         
-        /* --- 検索結果エリア --- */
-        .main-content { padding: 40px 20px; max-width: 1200px; margin: 0 auto; display: none; }
-        body.is-result .main-content { display: block; }
+        /* メインコンテンツエリア */
+        .main-content { padding: 0; margin: 0 auto; width: 100%; }
+
+        /* --- 画像再現: ホーム画面のスタイル --- */
+        .home-view { display: block; width: 100%; text-align: center; }
         
-        /* --- 【絶対死守】検索結果カードの見た目（前と一切変えていません） --- */
+        /* ヒーローエリア */
+        .hero-section { background-color: #dbeafe; padding: 60px 20px 0 20px; }
+        .hero-title { font-size: 56px; font-weight: normal; color: #000; margin: 0 0 20px 0; letter-spacing: 2px; }
+        .hero-subtitle { font-size: 32px; font-weight: normal; color: #000; margin: 0 0 40px 0; }
+        .hero-badge { background-color: #bae6fd; color: #000; font-size: 16px; padding: 18px 20px; display: block; max-width: 760px; margin: 0 auto; box-sizing: border-box; text-align: center; }
+
+        /* 使い方セクション */
+        .guide-section { max-width: 760px; margin: 40px auto 0 auto; padding: 0 20px; text-align: left; }
+        .guide-header { display: flex; background-color: #e5e5e5; align-items: center; }
+        .guide-icon { background-color: #a3a3a3; width: 60px; height: 50px; }
+        .guide-title { font-size: 22px; font-weight: bold; color: #000; margin: 0; padding-left: 25px; }
+        .guide-text { font-size: 13px; color: #000; line-height: 1.8; text-align: center; margin-top: 80px; margin-bottom: 120px; padding: 0 20px; }
+
+        /* フッター */
+        .site-footer { text-align: center; font-size: 12px; color: #333; padding-bottom: 40px; background-color: #ffffff; }
+        
+        /* --- 検索結果の見た目（元のデザインを維持） --- */
+        .search-result-view { display: none; padding: 40px 20px; max-width: 1200px; margin: 0 auto; }
+        
         .search-title {
             text-align: center;
             font-size: 22px;
@@ -104,21 +118,46 @@
         }
     </style>
 </head>
-<body class="is-home"> <div class="navbar">
-        <div class="logo" onclick="resetPage()">簡単辞典WEB</div>
+<body>
+
+    <div class="navbar">
+        <div class="brand-area" onclick="resetPage()">
+            <div class="logo">簡単辞典WEB</div>
+            <div class="sub-logo">Easy Web Dictionary</div>
+        </div>
         <div class="search-container">
-            <input type="text" id="searchInput" class="search-bar" placeholder="単語を入力..." onkeyup="handleSearch(event)">
+            <input type="text" id="searchInput" class="search-bar" placeholder="検索したい言葉を入力してください" onkeyup="handleSearch(event)">
             <button class="clear-btn" onclick="clearSearch()">×</button>
+            <button class="search-btn" onclick="triggerExactSearchFromBtn()">検索</button>
             <div id="suggestions" class="suggestions"></div>
         </div>
     </div>
 
-    <div class="home-logo-container">
-        <div class="giant-logo" onclick="resetPage()">簡単辞典WEB</div>
-    </div>
-
     <div class="main-content">
-        <div id="content-area"></div>
+        <div id="home-area" class="home-view">
+            <div class="hero-section">
+                <h1 class="hero-title">簡単辞書 WEB</h1>
+                <h2 class="hero-subtitle">Easy Web Dictionary</h2>
+                <div class="hero-badge">知りたい単語だけ検索！わかりやすくて短い説明ですぐわかる！</div>
+            </div>
+            
+            <div class="guide-section">
+                <div class="guide-header">
+                    <div class="guide-icon"></div>
+                    <h3 class="guide-title">使い方</h3>
+                </div>
+                <p class="guide-text">
+                    まず、上の検索バーに検索したい単語を入れます。そしたら出てきた候補を選択するか<br>
+                    検索を押すことで検索ができます。あとは、わかりやすいUIと説明ですぐに理解ができるでしょう。
+                </p>
+            </div>
+
+            <footer class="site-footer">
+                © Saito / Github Server and Create by Saito
+            </footer>
+        </div>
+
+        <div id="content-area" class="search-result-view"></div>
     </div>
 
     <script src="jpdata.js"></script>
@@ -129,68 +168,56 @@
 
         window.onload = () => {
             if (window.jpData) combinedData = combinedData.concat(window.jpData);
-            else if (window.JpData) combinedData = combinedData.concat(window.JpData);
+            if (window.JpData) combinedData = combinedData.concat(window.JpData);
             if (window.enData) combinedData = combinedData.concat(window.enData);
-            else if (window.EnData) combinedData = combinedData.concat(window.EnData);
+            if (window.EnData) combinedData = combinedData.concat(window.EnData);
         };
 
+        // 文字のブレ（大文字・全角など）を整える機能
         function cleanText(str) {
             return str.toLowerCase().replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
                 return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
             });
         }
 
-        // サジェスト用の単語名のみ＆重複排除ロジック（絶対死守）
+        // ① 候補リスト（サジェスト）用のゆるい絞り込み（1文字でも頭文字マッチで先回り表示）
         function filterSuggestions(query) {
             if (!query) return [];
             const target = cleanText(query);
 
-            const filtered = combinedData.filter(item => {
+            return combinedData.filter(item => {
                 const word = cleanText(item.word);
+                const romaji = item.romaji ? cleanText(item.romaji).replace(/\s+/g, '') : '';
+
                 if (target.length === 1) {
-                    return word.startsWith(target);
+                    return word.startsWith(target) || romaji.startsWith(target);
                 }
-                return word.includes(target);
+                return word.includes(target) || romaji.includes(target);
             });
-
-            const uniqueMap = new Map();
-            filtered.forEach(item => {
-                const key = cleanText(item.word);
-                if (!uniqueMap.has(key)) {
-                    uniqueMap.set(key, item);
-                }
-            });
-
-            return Array.from(uniqueMap.values());
         }
 
-        // 本番検索用の厳格な単語名のみ完全一致＆重複カットロジック（絶対死守）
+        // ② 本番検索（エンターキー）用の厳格な絞り込み（完全一致のみ合格）
         function filterExactSearch(query) {
             if (!query) return [];
             const target = cleanText(query);
 
-            const matched = combinedData.filter(item => {
-                return cleanText(item.word) === target;
-            });
+            return combinedData.filter(item => {
+                const word = cleanText(item.word);
+                const romaji = item.romaji ? cleanText(item.romaji).replace(/\s+/g, '') : '';
 
-            const uniqueMap = new Map();
-            matched.forEach(item => {
-                const key = cleanText(item.word);
-                if (!uniqueMap.has(key)) {
-                    uniqueMap.set(key, item);
-                }
+                // 単語そのもの、またはローマ字（スペースなし）と100%完全一致するか判定
+                return word === target || romaji === target;
             });
-
-            return Array.from(uniqueMap.values());
         }
 
-        // 入力中のキーボード操作
+        // 入力中のキーボード操作を処理する機能
         function handleSearch(e) {
             const query = e.target.value.trim();
 
+            // 【エンターキーが押されたとき】
             if (e.key === 'Enter') {
-                closeSuggestions();
-                performExactSearch(query);
+                document.getElementById('suggestions').style.display = 'none';
+                performExactSearch(query); // 厳格な完全一致検索を実行
                 return;
             }
 
@@ -201,6 +228,7 @@
                 return;
             }
 
+            // サジェスト候補は、打ち込みのガイドとして1文字からでも柔軟に出す
             const matches = filterSuggestions(query);
             
             if (matches.length > 0) {
@@ -210,13 +238,14 @@
                     div.className = 'suggestion-item';
                     div.textContent = match.word;
                     
+                    // 候補をクリックしたときは、その単語で確定なので直接カードを出す
                     div.onclick = (event) => {
                         event.stopPropagation();
                         const searchInput = document.getElementById('searchInput');
                         searchInput.value = match.word;
-                        closeSuggestions();
+                        suggestionsDiv.style.display = 'none';
                         
-                        performExactSearch(match.word);
+                        performExactSearch(match.word); // クリック時は確定検索
                         searchInput.blur();
                     };
                     suggestionsDiv.appendChild(div);
@@ -227,14 +256,23 @@
             }
         }
 
-        // 画面切り替えと確定検索の実行
+        // 検索ボタンが押された時の処理（Enterキーと同じ厳格検索を走らせる）
+        function triggerExactSearchFromBtn() {
+            const query = document.getElementById('searchInput').value.trim();
+            document.getElementById('suggestions').style.display = 'none';
+            performExactSearch(query);
+        }
+
+        // 画面の下に検索結果のカードをドカンと出す機能（完全一致のみ）
         function performExactSearch(query) {
             if (!query) return;
-
-            // 検索結果モードへ切り替え（中央の巨大ロゴを隠し、結果エリアを出す）
-            document.body.className = "is-result";
-
+            
+            // ホーム画面のコンテンツを非表示にし、検索結果エリアを表示する
+            document.getElementById('home-area').style.display = 'none';
             const contentArea = document.getElementById('content-area');
+            contentArea.style.display = 'block';
+            
+            // 完全一致するデータだけを抽出
             const results = filterExactSearch(query);
 
             let html = '';
@@ -270,13 +308,11 @@
             contentArea.innerHTML = html;
         }
 
-        function closeSuggestions() {
-            document.getElementById('suggestions').style.display = 'none';
-        }
-
         document.addEventListener('click', (e) => {
-            if (!e.target.classList.contains('search-bar')) {
-                closeSuggestions();
+            const suggestionsDiv = document.getElementById('suggestions');
+            const searchInput = document.getElementById('searchInput');
+            if (e.target !== suggestionsDiv && e.target !== searchInput) {
+                suggestionsDiv.style.display = 'none';
             }
         });
 
@@ -284,12 +320,15 @@
             resetPage();
         }
 
-        // 初期状態（ホーム）に完全リセットする機能
         function resetPage() {
             document.getElementById('searchInput').value = '';
-            closeSuggestions();
-            document.body.className = "is-home"; // ホームモード（巨大ロゴ表示）に戻す
-            document.getElementById('content-area').innerHTML = '';
+            document.getElementById('suggestions').style.display = 'none';
+            
+            // ホーム初期画面を再表示し、検索結果エリアを隠す
+            document.getElementById('home-area').style.display = 'block';
+            const contentArea = document.getElementById('content-area');
+            contentArea.style.display = 'none';
+            contentArea.innerHTML = '';
         }
     </script>
 </body>
