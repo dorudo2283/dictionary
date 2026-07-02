@@ -62,37 +62,46 @@
 
         .search-bar {
             width: 100%;
-            padding: 12px 35px 12px 15px;
+            padding: 12px 45px 12px 15px; /* ×ボタンが大きくなったため右の余白を調整 */
             border: none;
             font-size: 14px;
             outline: none;
             color: #333;
+            box-sizing: border-box;
+            height: 44px; /* 高さを明示的に固定 */
         }
 
-        /* プレースホルダーの文字色を少し薄めに */
         .search-bar::placeholder {
             color: #757575;
         }
 
+        /* ×ボタンの拡大調整 */
         .clear-btn {
             position: absolute;
-            right: 10px;
+            right: 12px;
             background: none;
             border: none;
-            font-size: 16px;
+            font-size: 24px; /* ｘを大きく変更 */
             cursor: pointer;
             color: #999;
             padding: 0;
+            line-height: 1;
         }
 
+        /* 検索ボタンのサイズを検索窓と統一 */
         .search-btn {
             background: #3b82f6;
             color: white;
             border: none;
-            padding: 12px 20px;
+            padding: 0 20px; /* 上下パディングをなくし高さで統一 */
             font-size: 14px;
             cursor: pointer;
             white-space: nowrap;
+            height: 44px; /* 検索窓と同じ高さに設定 */
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .search-btn:hover {
@@ -263,8 +272,9 @@
             margin-left: 5px;
         }
 
+        /* 【 】- ○○ のフォントサイズを18pxに拡大変更 */
         .word-meta {
-            font-size: 14px;
+            font-size: 18px;
             color: #333;
         }
 
@@ -302,7 +312,6 @@
 </head>
 <body>
 
-    <!-- 常に上部に固定されるバー -->
     <div class="navbar">
         <div class="logo-container" onclick="resetPage()">
             <h1 class="logo-main">簡単辞典WEB</h1>
@@ -318,9 +327,7 @@
         </div>
     </div>
 
-    <!-- メイン表示エリア -->
     <div class="main-content" id="mainContent">
-        <!-- 初期状態（トップページ風表示） -->
         <div class="welcome-view" id="welcomeView">
             <div class="hero-box">
                 <div class="hero-top">
@@ -348,11 +355,9 @@
             </div>
         </div>
 
-        <!-- 検索結果表示用の空エリア -->
         <div class="search-results-view" id="searchResultsView" style="display: none;"></div>
     </div>
 
-    <!-- 外部データファイルの読み込み -->
     <script src="jpdata.js"></script>
     <script src="endata.js"></script>
     
