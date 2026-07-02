@@ -72,7 +72,7 @@
             line-height: 1.6;
             color: #111;
             text-align: justify;
-            margin-bottom: 20px;
+            margin-bottom: 20px; /* 英訳との間隔調整 */
             text-indent: 1em;
         }
 
@@ -83,20 +83,6 @@
             color: #111;
             text-align: center; /* 中央揃え */
             margin-bottom: 30px;
-        }
-
-        /* 押したら検索に行きそうに見せるためのリンク風スタイル */
-        .clickable-en-word {
-            color: #0066cc;
-            text-decoration: underline;
-            cursor: pointer;
-            font-weight: bold;
-            transition: color 0.2s;
-        }
-        .clickable-en-word:hover {
-            color: #003399;
-            background-color: rgba(0, 102, 204, 0.08);
-            border-radius: 2px;
         }
 
         .result-examples {
@@ -227,13 +213,6 @@
             }
         }
 
-        // 英訳文字をクリックした際に呼び出される自動検索用関数
-        function searchByEnMeaning(word) {
-            const searchInput = document.getElementById('searchInput');
-            searchInput.value = word; // 検索窓の文字を書き換える
-            performExactSearch(word); // 検索を実行
-        }
-
         // 画面の下に検索結果のカードをドカンと出す機能（完全一致のみ）
         function performExactSearch(query) {
             if (!query) return;
@@ -253,11 +232,7 @@
                     // 英訳データ(en_meaning)が存在する場合の処理
                     let enMeaningHtml = '';
                     if (item.en_meaning) {
-                        // 認知科学的アプローチ：ユーザーが「押せる」と無意識に識別できるようリンク風の装飾と挙動を適用
-                        enMeaningHtml = `
-                            <p class="result-en-meaning">
-                                英訳：<span class="clickable-en-word" onclick="searchByEnMeaning('${item.en_meaning}')">${item.en_meaning}</span>
-                            </p>`;
+                        enMeaningHtml = `<p class="result-en-meaning">英訳：${item.en_meaning}</p>`;
                     }
 
                     // 例文の表示処理（日本語データ用の箇条書き、または英語の「・」スタイルに対応）
