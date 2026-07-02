@@ -66,7 +66,6 @@
             border: none;
             font-size: 14px;
             outline: none;
-            color: #33 Navy;
             color: #333;
         }
 
@@ -278,7 +277,6 @@
             text-indent: 1em;
         }
 
-        /* 英訳箇所のデザイン強化（アフォーダンス設計） */
         .result-en-meaning {
             font-size: 18px;
             line-height: 1.6;
@@ -287,12 +285,14 @@
             margin-bottom: 30px;
         }
 
-        /* タップ可能な英語ワードのスタイル */
+        /* 認知デザインに則った視覚リンク */
         .clickable-word {
             color: #2563eb;
             cursor: pointer;
             font-weight: bold;
             transition: color 0.2s ease;
+            display: inline-block;
+            margin: 0 4px;
         }
 
         .clickable-word:hover {
@@ -463,10 +463,8 @@
         // 英訳がタップされたときに自動で検索を実行する関数
         function searchByEnMeaning(wordText) {
             const searchInput = document.getElementById('searchInput');
-            // 検索バーの文字を書き換えて検索を実行
             searchInput.value = wordText;
             performExactSearch(wordText);
-            // 画面最上部へスムーズにスクロール（ユーザビリティ向上）
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -477,7 +475,6 @@
             const welcomeView = document.getElementById('welcomeView');
             const resultsView = document.getElementById('searchResultsView');
             
-            // トップページ要素を非表示にして結果要素を表示
             welcomeView.style.display = 'none';
             resultsView.style.display = 'block';
             
@@ -490,12 +487,24 @@
                 html += `<h2 class="search-title">「${query}」の検索結果 …</h2>`;
 
                 results.forEach(item => {
-                    // 英訳データ(en_meaning)が存在する場合、タップ可能なボタン風にして埋め込む
+                    // 日本語用データにある「enTranslation」を正確に読み出す
                     let enMeaningHtml = '';
-                    if (item.en_meaning) {
-                        // 文字列内のシングルクォーテーション等によるJSエラーを防ぐためエスケープ処理
-                        const escapedWord = item.en_meaning.replace(/'/g, "\\'");
-                        enMeaningHtml = `<p class="result-en-meaning">英訳：<span class="clickable-word" onclick="searchByEnMeaning('${escapedWord}')">${item.en_meaning}</span></p>`;
+                    if (item.enTranslation) {
+                        // 「/」や「,」が含まれる場合は分割して個別にリンク化する
+                        const tokens = item.enTranslation.split(/[\/,]+/);
+                        let linksHtml = '';
+                        
+                        tokens.forEach((token, index) => {
+                            const trimmed = token.trim();
+                            if (trimmed) {
+                                const escapedWord = trimmed.replace(/'/g, "\\'");
+                                linksHtml += `<span class="clickable-word" onclick="searchByEnMeaning('${escapedWord}')">${trimmed}</span>`;
+                                if (index < tokens.length - 1 && tokens[index+1].trim()) {
+                                    linksHtml += ' / ';
+                                }
+                            }
+                        });
+                        enMeaningHtml = `<p class="result-en-meaning">英訳：${linksHtml}</p>`;
                     }
 
                     let examplesHtml = '';
@@ -522,7 +531,6 @@
                 });
             }
 
-            // フッターを検索結果の下にも表示させる
             html += `
                 <div class="footer" style="margin-top: 60px;">
                     © Saito / Github Server and Create by Saito
@@ -532,7 +540,6 @@
             resultsView.innerHTML = html;
         }
 
-        // 枠外クリックでサジェストを閉じる
         document.addEventListener('click', (e) => {
             const suggestionsDiv = document.getElementById('suggestions');
             const searchInput = document.getElementById('searchInput');
@@ -545,7 +552,6 @@
             resetPage();
         }
 
-        // ロゴクリックやクリア時、初期のHPトップ画面に戻す
         function resetPage() {
             document.getElementById('searchInput').value = '';
             document.getElementById('suggestions').style.display = 'none';
