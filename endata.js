@@ -12,6 +12,50 @@ window.enData = [
         ]
     },
     { 
+        word: "Many", 
+        lang: "en",
+        pos: "形容詞", 
+        type: "数量", 
+        romaji: "メニー", 
+        meaning: "「Many」は、数えられる名詞（可算名詞）の複数量に対して「たくさんの」「多くの」という意味で使われる言葉。主に否定文や疑問文、またはフォーマルな表現で好まれる。<br>読み：メニー<br>和訳：多くの（数えられるもの）",
+        examples: [
+            "There are many books on the shelf.（棚にはたくさんの本があります。）"
+        ]
+    },
+    { 
+        word: "Much", 
+        lang: "en",
+        pos: "形容詞", 
+        type: "数量", 
+        romaji: "マッチ", 
+        meaning: "「Much」は、数えられない名詞（不可算名詞）の分量に対して「たくさんの」「多額の」という意味で使われる言葉。液体、時間、お金、感情などの量を示し、主に否定文や疑問文で多用される。<br>読み：マッチ<br>和訳：多くの（数えられないもの）",
+        examples: [
+            "I don't have much money with me today.（今日はあまりお金を持ち合わせていません。）"
+        ]
+    },
+    { 
+        word: "Few", 
+        lang: "en",
+        pos: "形容詞", 
+        type: "数量", 
+        romaji: "フュー", 
+        meaning: "「Few」は、数えられる名詞（可算名詞）に対して「ほとんどない」という否定的なニュアンスで数が少ないことを表す言葉。「a few」にすると「少しある」という肯定的な意味に変化する。<br>読み：フュー<br>和訳：ほとんどない（数えられるもの）",
+        examples: [
+            "He has few friends in this town.（彼はこの街に友達がほとんどいません。）"
+        ]
+    },
+    { 
+        word: "Little", 
+        lang: "en",
+        pos: "形容詞", 
+        type: "数量", 
+        romaji: "リトル", 
+        meaning: "「Little」は、数えられない名詞（不可算名詞）に対して「ほとんどない」という否定的なニュアンスで分量が少ないことを表す言葉。「a little」にすると「少しある」という肯定的な意味になる。<br>読み：リトル<br>和訳：ほとんどない（数えられないもの）",
+        examples: [
+            "There is little water left in the bottle.（ボトルには水がほとんど残っていません。）"
+        ]
+    },
+    { 
         word: "Hello", 
         lang: "en",
         pos: "挨拶", 
